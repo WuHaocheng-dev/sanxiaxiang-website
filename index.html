@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="三下乡优秀实践队伍经验交流平台">
+  <meta name="keywords" content="三下乡,实践队伍,经验交流,大学生实践">
+  <meta name="robots" content="index, follow">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <title>三下乡优秀实践队伍经验交流平台</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root { 
+      --primary: #6366f1; 
+      --secondary: #8b5cf6; 
+      --accent: #06b6d4; 
+      --bg-dark: #0c0c1e; 
+      --bg-mid: #1a1a3e; 
+      --bg-light: #2d1b4e; 
+      --text-primary: #ffffff; 
+      --text-secondary: #a0a0a0; 
+      --text-muted: #666666;
+    }
+    body { 
+      background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-mid) 50%, var(--bg-light) 100%); 
+      min-height: 100vh; 
+      color: var(--text-primary); 
+      font-family: 'Segoe UI', 'PingFang SC', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+    header { 
+      background: rgba(255,255,255,0.05); 
+      backdrop-filter: blur(20px); 
+      border-bottom: 1px solid rgba(99,102,241,0.2); 
+      position: sticky; 
+      top: 0; 
+      z-index: 1000;
+    }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 15px 0; }
+    .logo { 
+      font-size: 24px; 
+      font-weight: bold; 
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent; 
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .nav-links { display: flex; list-style: none; gap: 30px; }
+    .nav-links a { 
+      color: var(--text-secondary); 
+      text-decoration: none; 
+      transition: all 0.3s; 
+      padding: 5px 0;
+      position: relative;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--primary); }
+    .nav-links a.active::after { 
+      content: ''; 
+      position: absolute; 
+      bottom: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 2px; 
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+    .burger { display: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); }
+    .hero { 
+      text-align: center; 
+      padding: 60px 20px; 
+      background: radial-gradient(ellipse at center, rgba(99,102,241,0.15) 0%, transparent 70%);
+      animation: fadeIn 0.8s ease-out;
+    }
+    .hero h1 { 
+      font-size: 36px; 
+      margin-bottom: 15px; 
+      background: linear-gradient(90deg, var(--primary), var(--accent)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent;
+      animation: slideDown 0.6s ease-out;
+    }
+    .hero p { font-size: 18px; color: var(--text-secondary); animation: slideUp 0.6s ease-out 0.2s both; }
+    .announcement { 
+      background: rgba(255,255,255,0.05); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(99,102,241,0.2); 
+      border-radius: 12px; 
+      padding: 20px; 
+      margin: 30px 0;
+      animation: fadeIn 0.6s ease-out 0.3s both;
+    }
+    .announcement h3 { color: var(--primary); margin-bottom: 10px; font-size: 18px; }
+    .announcement p { color: var(--text-secondary); line-height: 1.6; }
+    .carousel { 
+      position: relative; 
+      height: 300px; 
+      overflow: hidden; 
+      border-radius: 16px; 
+      margin: 30px 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      animation: fadeIn 0.6s ease-out 0.4s both;
+    }
+    .carousel-item { 
+      position: absolute; 
+      width: 100%; 
+      height: 100%; 
+      opacity: 0; 
+      transition: opacity 0.6s ease-in-out;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-item.active { opacity: 1; }
+    .carousel-image { 
+      width: 100%; 
+      height: 100%; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center; 
+      font-size: 28px; 
+      font-weight: bold; 
+      position: relative; 
+      overflow: hidden;
+      color: white;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .carousel-image::before { 
+      content: ''; 
+      position: absolute; 
+      top: 0; 
+      left: -100%; 
+      width: 100%; 
+      height: 100%; 
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); 
+      animation: shimmer 3s infinite;
+    }
+    .carousel-image-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .carousel-image-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .carousel-image-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    @keyframes shimmer { 0% { left: -100%; } 100% { left: 100%; } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .carousel-controls { 
+      position: absolute; 
+      bottom: 20px; 
+      left: 50%; 
+      transform: translateX(-50%); 
+      display: flex; 
+      gap: 12px;
+    }
+    .carousel-btn { 
+      width: 44px; 
+      height: 44px; 
+      border-radius: 50%; 
+      background: rgba(255,255,255,0.15); 
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: white; 
+      font-size: 22px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-btn:hover { 
+      background: rgba(99,102,241,0.5); 
+      border-color: rgba(99,102,241,0.8);
+      transform: scale(1.1);
+    }
+    .quick-links { 
+      display: grid; 
+      grid-template-columns: repeat(4, 1fr); 
+      gap: 20px; 
+      margin: 30px 0;
+    }
+    .quick-link { 
+      background: rgba(255,255,255,0.05); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(99,102,241,0.2); 
+      border-radius: 16px; 
+      padding: 30px 20px; 
+      text-align: center; 
+      text-decoration: none; 
+      color: inherit; 
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .quick-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .quick-link:hover { 
+      transform: translateY(-8px); 
+      border-color: rgba(99,102,241,0.5); 
+      box-shadow: 0 20px 50px rgba(99,102,241,0.2);
+    }
+    .quick-link:hover::before { transform: scaleX(1); }
+    .quick-link .icon { font-size: 48px; margin-bottom: 12px; }
+    .quick-link h4 { 
+      margin-bottom: 8px; 
+      font-size: 18px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .quick-link p { font-size: 14px; color: var(--text-secondary); }
+    .articles-preview { margin: 30px 0; }
+    .articles-preview h2 { 
+      margin-bottom: 25px; 
+      font-size: 28px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent;
+    }
+    .article-card { 
+      background: rgba(255,255,255,0.05); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(99,102,241,0.2); 
+      border-radius: 16px; 
+      padding: 30px; 
+      margin-bottom: 20px; 
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .article-card::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, rgba(99,102,241,0.1) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .article-card:hover { 
+      transform: translateX(8px); 
+      border-color: rgba(99,102,241,0.4); 
+      box-shadow: 0 15px 40px rgba(99,102,241,0.15);
+    }
+    .article-card:hover::after { opacity: 1; }
+    .article-card h3 { 
+      margin-bottom: 12px; 
+      font-size: 22px; 
+      color: var(--text-primary);
+    }
+    .article-card p { color: var(--text-secondary); line-height: 1.7; }
+    .read-more { color: var(--secondary); text-decoration: none; font-weight: bold; font-size: 14px; display: inline-block; margin-top: 15px; }
+    .read-more:hover { text-decoration: underline; }
+    .page-section { display: none; animation: fadeIn 0.4s ease-out; }
+    .page-section.active { display: block; }
+    .article-list-page h1, .gallery-page h1 { 
+      font-size: 32px; 
+      margin-bottom: 30px; 
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent;
+    }
+    .article-content { 
+      max-width: 800px; 
+      margin: 0 auto;
+      padding: 20px 0;
+    }
+    .article-content h1 { 
+      font-size: 32px; 
+      margin-bottom: 20px; 
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+    .article-content h2 { 
+      font-size: 24px; 
+      margin: 30px 0 15px; 
+      color: var(--primary);
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(99,102,241,0.2);
+    }
+    .article-content p { 
+      color: var(--text-secondary); 
+      line-height: 1.8; 
+      margin-bottom: 15px;
+      font-size: 16px;
+    }
+    .article-image { 
+      height: 250px; 
+      border-radius: 12px; 
+      margin: 25px 0;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    }
+    .article-image-1 { background: linear-gradient(135deg, #667eea, #764ba2); }
+    .article-image-2 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+    .article-image-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+    .article-image-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+    .gallery-grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 20px;
+    }
+    .gallery-item { 
+      aspect-ratio: 1; 
+      border-radius: 12px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
+    .gallery-item:hover { 
+      transform: scale(1.05); 
+      box-shadow: 0 15px 50px rgba(99,102,241,0.3);
+    }
+    .gallery-item::after {
+      content: '+';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 48px;
+      color: white;
+      opacity: 0;
+      transition: opacity 0.3s;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .gallery-item:hover::after { opacity: 1; }
+    .gallery-item-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .gallery-item-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+    .gallery-item-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .gallery-item-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+    .gallery-item-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+    .gallery-item-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+    .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
+    .page-btn { 
+      padding: 12px 24px; 
+      border: 1px solid rgba(99,102,241,0.3); 
+      border-radius: 8px; 
+      background: rgba(255,255,255,0.05); 
+      color: var(--text-secondary); 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .page-btn:hover, .page-btn.active { 
+      background: var(--primary); 
+      border-color: var(--primary); 
+      color: white;
+    }
+    footer { 
+      background: rgba(255,255,255,0.03); 
+      border-top: 1px solid rgba(99,102,241,0.1); 
+      padding: 30px 0; 
+      text-align: center; 
+      margin-top: 50px;
+    }
+    footer p { color: var(--text-muted); font-size: 14px; margin-bottom: 8px; }
+    footer a { color: var(--text-muted); text-decoration: none; }
+    footer a:hover { color: var(--primary); }
+    .back-btn { 
+      display: inline-flex; 
+      align-items: center; 
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.3);
+      border-radius: 8px;
+      color: var(--primary);
+      text-decoration: none;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .back-btn:hover { 
+      background: rgba(99,102,241,0.2); 
+      border-color: rgba(99,102,241,0.5);
+    }
+    #twikoo-container { margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; }
+    .modal { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      backdrop-filter: blur(5px);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal.active { display: flex; }
+    .modal-content { 
+      width: 100%; 
+      max-width: 800px; 
+      aspect-ratio: 4/3; 
+      border-radius: 16px; 
+      position: relative;
+      animation: zoomIn 0.3s ease-out;
+    }
+    @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .modal-close { 
+      position: absolute; 
+      top: -40px; 
+      right: 0; 
+      width: 40px; 
+      height: 40px; 
+      border-radius: 50%; 
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+    }
+    .stats-grid { 
+      display: grid; 
+      grid-template-columns: repeat(3, 1fr); 
+      gap: 20px; 
+      margin: 30px 0;
+    }
+    .stat-card { 
+      background: rgba(255,255,255,0.05); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(99,102,241,0.2); 
+      border-radius: 12px; 
+      padding: 25px; 
+      text-align: center;
+    }
+    .stat-card .number { 
+      font-size: 48px; 
+      font-weight: bold; 
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent;
+    }
+    .stat-card .label { color: var(--text-secondary); margin-top: 10px; font-size: 14px; }
+    .scroll-top { 
+      position: fixed; 
+      bottom: 30px; 
+      right: 30px; 
+      width: 50px; 
+      height: 50px; 
+      border-radius: 50%; 
+      background: var(--primary);
+      border: none;
+      color: white;
+      font-size: 20px;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 1000;
+      box-shadow: 0 5px 20px rgba(99,102,241,0.4);
+    }
+    .scroll-top.active { opacity: 1; visibility: visible; }
+    .scroll-top:hover { transform: translateY(-3px); }
+    @media (max-width: 1024px) {
+      .quick-links { grid-template-columns: repeat(2, 1fr); }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .stats-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links { 
+        display: none; 
+        position: absolute; 
+        top: 100%; 
+        left: 0; 
+        right: 0; 
+        background: rgba(12,12,30,0.95);
+        backdrop-filter: blur(20px);
+        flex-direction: column;
+        padding: 20px;
+        gap: 15px;
+        border-bottom: 1px solid rgba(99,102,241,0.2);
+      }
+      .nav-links.active { display: flex; }
+      .burger { display: block; }
+      .hero h1 { font-size: 28px; }
+      .hero p { font-size: 16px; }
+      .carousel { height: 220px; }
+      .carousel-image { font-size: 22px; }
+      .article-content h1 { font-size: 26px; }
+      .article-content h2 { font-size: 20px; }
+    }
+    @media (max-width: 480px) {
+      .quick-links { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .stats-grid { grid-template-columns: 1fr; }
+      .hero h1 { font-size: 24px; }
+      .carousel { height: 180px; }
+      .carousel-image { font-size: 18px; }
+      .article-card { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="container">
+      <div class="logo" onclick="navigateTo('home')">三下乡交流平台</div>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#" onclick="navigateTo('home')" class="active">首页</a></li>
+        <li><a href="#" onclick="navigateTo('articles')">实践经验</a></li>
+        <li><a href="#" onclick="navigateTo('gallery')">成果展厅</a></li>
+      </ul>
+      <div class="burger" onclick="toggleMenu()">☰</div>
+    </nav>
+  </header>
+
+  <section id="home-page" class="page-section active">
+    <section class="hero">
+      <div class="container">
+        <h1>三下乡优秀实践队伍经验交流平台</h1>
+        <p>汇聚优秀实践成果，分享宝贵实践经验</p>
+      </div>
+    </section>
+    <main class="container">
+      <section class="announcement">
+        <h3>📢 最新公告</h3>
+        <p>【2026年暑期三下乡活动正式启动】欢迎各实践队伍积极参与，分享你们的实践成果与经验！</p>
+      </section>
+      <section class="carousel">
+        <div class="carousel-item active">
+          <div class="carousel-image carousel-image-1">实践活动现场</div>
+        </div>
+        <div class="carousel-item">
+          <div class="carousel-image carousel-image-2">乡村产业调研</div>
+        </div>
+        <div class="carousel-item">
+          <div class="carousel-image carousel-image-3">红色研学之旅</div>
+        </div>
+        <div class="carousel-controls">
+          <button class="carousel-btn prev" onclick="prevSlide()">‹</button>
+          <button class="carousel-btn next" onclick="nextSlide()">›</button>
+        </div>
+      </section>
+      <section class="quick-links">
+        <div class="quick-link" onclick="navigateTo('articles')">
+          <div class="icon">📚</div>
+          <h4>实践经验</h4>
+          <p>查看优秀实践队伍的经验分享</p>
+        </div>
+        <div class="quick-link" onclick="navigateTo('gallery')">
+          <div class="icon">🖼️</div>
+          <h4>成果展厅</h4>
+          <p>浏览实践活动的精彩瞬间</p>
+        </div>
+        <div class="quick-link" onclick="openArticle('article1')">
+          <div class="icon">🍎</div>
+          <h4>苹果产业调研</h4>
+          <p>雷大镇屈岔村、合岘村调研纪实</p>
+        </div>
+        <div class="quick-link" onclick="openArticle('article2')">
+          <div class="icon">🚩</div>
+          <h4>红色研学</h4>
+          <p>界石铺长征纪念馆研学纪实</p>
+        </div>
+      </section>
+      <section class="articles-preview">
+        <h2>📰 最新实践文章</h2>
+        <article class="article-card" onclick="openArticle('article1')">
+          <h3>雷大镇屈岔村、合岘村苹果产业调研纪实</h3>
+          <p>本次实践活动深入静宁县雷大镇屈岔村和合岘村，调研当地苹果产业发展现状，了解果农生产生活情况...</p>
+          <span class="read-more">阅读全文 ›</span>
+        </article>
+        <article class="article-card" onclick="openArticle('article2')">
+          <h3>界石铺长征纪念馆红色研学纪实</h3>
+          <p>实践队伍前往界石铺长征纪念馆，开展红色研学活动，重温革命历史，传承红色基因...</p>
+          <span class="read-more">阅读全文 ›</span>
+        </article>
+      </section>
+    </main>
+  </section>
+
+  <section id="articles-page" class="page-section">
+    <main class="container">
+      <h1>📚 实践经验分享专区</h1>
+      <article class="article-card" onclick="openArticle('article1')">
+        <h3>雷大镇屈岔村、合岘村苹果产业调研纪实</h3>
+        <div class="article-image article-image-1"></div>
+        <p>静宁县是著名的"苹果之乡"，苹果产业是当地农民增收致富的支柱产业。为深入了解乡村振兴战略下苹果产业的发展现状，我们实践团队前往雷大镇屈岔村和合岘村开展实地调研...</p>
+        <span class="read-more">阅读全文</span>
+      </article>
+      <article class="article-card" onclick="openArticle('article2')">
+        <h3>界石铺长征纪念馆红色研学纪实</h3>
+        <div class="article-image article-image-3"></div>
+        <p>界石铺长征纪念馆位于甘肃省静宁县，是红一方面军长征途中的重要纪念地。为深入学习贯彻习近平新时代中国特色社会主义思想，传承红色基因，我们实践团队前往界石铺长征纪念馆开展红色研学活动...</p>
+        <span class="read-more">阅读全文</span>
+      </article>
+      <div class="pagination">
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">下一页 ›</button>
+      </div>
+    </main>
+  </section>
+
+  <section id="gallery-page" class="page-section">
+    <main class="container">
+      <h1>🖼️ 实践成果展厅</h1>
+      <section class="stats-grid">
+        <div class="stat-card">
+          <div class="number">128</div>
+          <div class="label">实践队伍</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">56</div>
+          <div class="label">调研地区</div>
+        </div>
+        <div class="stat-card">
+          <div class="number">892</div>
+          <div class="label">实践人次</div>
+        </div>
+      </section>
+      <h2 style="margin: 30px 0; color: var(--text-secondary);">📸 精彩瞬间</h2>
+      <section class="gallery-grid">
+        <div class="gallery-item gallery-item-1" onclick="openGallery(0)"></div>
+        <div class="gallery-item gallery-item-2" onclick="openGallery(1)"></div>
+        <div class="gallery-item gallery-item-3" onclick="openGallery(2)"></div>
+        <div class="gallery-item gallery-item-4" onclick="openGallery(3)"></div>
+        <div class="gallery-item gallery-item-5" onclick="openGallery(4)"></div>
+        <div class="gallery-item gallery-item-6" onclick="openGallery(5)"></div>
+      </section>
+    </main>
+  </section>
+
+  <section id="article1-page" class="page-section">
+    <main class="container">
+      <button class="back-btn" onclick="navigateTo('articles')">‹ 返回列表</button>
+      <article class="article-content">
+        <h1>雷大镇屈岔村、合岘村苹果产业调研纪实</h1>
+        <div class="article-image article-image-1"></div>
+        <h2>一、调研背景</h2>
+        <p>静宁县是著名的"苹果之乡"，苹果产业是当地农民增收致富的支柱产业。为深入了解乡村振兴战略下苹果产业的发展现状，我们实践团队前往雷大镇屈岔村和合岘村开展实地调研。</p>
+        <h2>二、调研方法</h2>
+        <p>本次调研采用问卷调查、实地走访、深度访谈相结合的方式，共发放问卷150份，回收有效问卷138份，访谈果农30余户，走访村委会、合作社等基层组织。</p>
+        <h2>三、调研发现</h2>
+        <p>调研发现，近年来在政府支持和市场驱动下，当地苹果产业取得了显著发展。果园面积不断扩大，种植技术逐步提升，电商销售渠道日益完善。但同时也面临着劳动力老龄化、病虫害防治难度加大、市场价格波动等挑战。</p>
+        <h2>四、发展建议</h2>
+        <p>针对调研中发现的问题，我们提出以下建议：一是加强技术培训，提升果农种植水平；二是培育新型经营主体，发展适度规模经营；三是完善产业链条，提高附加值；四是加强品牌建设，提升市场竞争力。</p>
+        <div class="article-image article-image-2"></div>
+        <h2>五、实践感悟</h2>
+        <p>通过这次实践活动，我们深刻感受到了乡村振兴战略给农村带来的巨大变化，也体会到了农民的辛勤与智慧。作为新时代大学生，我们应当积极投身乡村建设，用所学知识服务乡村发展。</p>
+      </article>
+      <div id="twikoo-container-article1"></div>
+    </main>
+  </section>
+
+  <section id="article2-page" class="page-section">
+    <main class="container">
+      <button class="back-btn" onclick="navigateTo('articles')">‹ 返回列表</button>
+      <article class="article-content">
+        <h1>界石铺长征纪念馆红色研学纪实</h1>
+        <div class="article-image article-image-3"></div>
+        <h2>一、研学背景</h2>
+        <p>界石铺长征纪念馆位于甘肃省静宁县，是红一方面军长征途中的重要纪念地。为深入学习贯彻习近平新时代中国特色社会主义思想，传承红色基因，我们实践团队前往界石铺长征纪念馆开展红色研学活动。</p>
+        <h2>二、研学过程</h2>
+        <p>在讲解员的带领下，我们参观了纪念馆的各个展厅，认真聆听了红军长征在静宁的历史故事，观看了珍贵的历史文物和照片。随后，我们在纪念馆广场举行了重温入党誓词仪式，表达了对革命先烈的崇敬之情。</p>
+        <h2>三、历史意义</h2>
+        <p>界石铺是红军长征途中的"长征加油站"，红军在这里进行了休整和补给，为继续长征奠定了基础。通过这次研学活动，我们深刻理解了长征精神的内涵，感受到了革命先烈不怕牺牲、艰苦奋斗的崇高精神。</p>
+        <h2>四、研学感悟</h2>
+        <p>作为新时代青年，我们要铭记历史，传承红色基因，将长征精神融入到学习和生活中。在今后的学习和工作中，我们要勇于担当、敢于创新，为实现中华民族伟大复兴的中国梦贡献自己的力量。</p>
+        <div class="article-image article-image-4"></div>
+        <h2>五、实践成果</h2>
+        <p>本次研学活动不仅让我们接受了一次深刻的红色教育，还激发了我们的爱国热情和责任感。我们将以此次研学为契机，深入学习党史，坚定理想信念，努力成为担当民族复兴大任的时代新人。</p>
+      </article>
+      <div id="twikoo-container-article2"></div>
+    </main>
+  </section>
+
+  <section id="verify-page" class="page-section">
+    <pre style="background: transparent; color: #fff; font-size: 14px; font-family: monospace; padding: 20px;">b574b99027a3a5659bc996d7b01bebaf9cf9d71a</pre>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>&copy; 2026 三下乡优秀实践队伍经验交流平台</p>
+      <p>主办单位：自动化与电气工程学院 | 技术支持：25电气1班</p>
+      <p><a href="#" onclick="navigateTo('home')">关于我们</a> | <a href="#" onclick="navigateTo('home')">联系我们</a></p>
+    </div>
+  </footer>
+
+  <div class="modal" id="galleryModal">
+    <div class="modal-content" id="modalContent"></div>
+    <button class="modal-close" onclick="closeGallery()">×</button>
+  </div>
+
+  <button class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</button>
+
+  <script>
+    var currentSlide = 0;
+    var slides = document.querySelectorAll('.carousel-item');
+    var slideInterval;
+    var twikooInitialized = { article1: false, article2: false };
+
+    function showSlide(index) {
+      slides.forEach(function(s, i) {
+        s.classList.toggle('active', i === index);
+      });
+      currentSlide = index;
+    }
+
+    function nextSlide() {
+      showSlide((currentSlide + 1) % slides.length);
+    }
+
+    function prevSlide() {
+      showSlide((currentSlide - 1 + slides.length) % slides.length);
+    }
+
+    function startCarousel() {
+      slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    function stopCarousel() {
+      clearInterval(slideInterval);
+    }
+
+    document.querySelector('.carousel').addEventListener('mouseenter', stopCarousel);
+    document.querySelector('.carousel').addEventListener('mouseleave', startCarousel);
+
+    startCarousel();
+
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    function navigateTo(pageId) {
+      document.querySelectorAll('.page-section').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.getElementById(pageId + '-page').classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(function(a) {
+        a.classList.remove('active');
+      });
+      var activeLink = document.querySelector('.nav-links a[onclick*="' + pageId + '"]');
+      if (activeLink) activeLink.classList.add('active');
+      document.getElementById('navLinks').classList.remove('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openArticle(articleId) {
+      document.querySelectorAll('.page-section').forEach(function(el) {
+        el.classList.remove('active');
+      });
+      document.getElementById(articleId + '-page').classList.add('active');
+      document.querySelectorAll('.nav-links a').forEach(function(a) {
+        a.classList.remove('active');
+      });
+      document.getElementById('navLinks').classList.remove('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      initTwikoo(articleId);
+    }
+
+    var galleryStyles = [
+      'linear-gradient(135deg, #667eea, #764ba2)',
+      'linear-gradient(135deg, #f093fb, #f5576c)',
+      'linear-gradient(135deg, #4facfe, #00f2fe)',
+      'linear-gradient(135deg, #43e97b, #38f9d7)',
+      'linear-gradient(135deg, #fa709a, #fee140)',
+      'linear-gradient(135deg, #a8edea, #fed6e3)'
+    ];
+
+    function openGallery(index) {
+      document.getElementById('modalContent').style.background = galleryStyles[index];
+      document.getElementById('galleryModal').classList.add('active');
+    }
+
+    function closeGallery() {
+      document.getElementById('galleryModal').classList.remove('active');
+    }
+
+    document.getElementById('galleryModal').addEventListener('click', function(e) {
+      if (e.target === this) closeGallery();
+    });
+
+    function scrollToTop() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    window.addEventListener('scroll', function() {
+      var scrollTop = document.getElementById('scrollTop');
+      if (window.scrollY > 300) {
+        scrollTop.classList.add('active');
+      } else {
+        scrollTop.classList.remove('active');
+      }
+    });
+
+    function initTwikoo(articleId) {
+      if (twikooInitialized[articleId]) return;
+      twikooInitialized[articleId] = true;
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/twikoo@1.6.30/dist/twikoo.all.min.js';
+      s.onload = function() {
+        twikoo.init({
+          envId: 'https://twikoo-haocheng2.vercel.app',
+          el: '#twikoo-container-' + articleId,
+          path: '/article/' + articleId,
+          requiredFields: ['nick', 'mail'],
+          enableCommentReview: true
+        });
+      };
+      document.head.appendChild(s);
+    }
+
+    function sanitizeInput(input) {
+      return input.replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/"/g, '&quot;')
+                  .replace(/'/g, '&#039;');
+    }
+
+    function checkVerification() {
+      var path = window.location.pathname;
+      if (path.indexOf('88d09a97fd81a6b59006fecc27af3b53') !== -1) {
+        document.querySelectorAll('.page-section').forEach(function(el) {
+          el.classList.remove('active');
+        });
+        document.getElementById('verify-page').classList.add('active');
+        document.querySelector('header').style.display = 'none';
+        document.querySelector('footer').style.display = 'none';
+      }
+    }
+
+    window.addEventListener('load', checkVerification);
+  </script>
+</body>
+</html>
