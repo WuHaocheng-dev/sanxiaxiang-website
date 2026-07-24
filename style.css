@@ -908,9 +908,18 @@ footer a:hover { color: var(--primary); }
   top: 50%; 
   left: 50%; 
   transform: translate(-50%, -50%); 
-  font-size: 48px; 
+  font-size: 32px; 
   color: white; 
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.video-play-icon { 
+  position: absolute; 
+  top: 50%; 
+  left: 50%; 
+  transform: translate(-50%, -50%); 
+  font-size: 48px; 
+  opacity: 0.8; 
+  transition: opacity 0.3s;
 }
 .video-card h3 { font-size: 18px; color: var(--text-primary); margin-bottom: 8px; }
 .video-card p { color: var(--text-secondary); font-size: 14px; }

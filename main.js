@@ -123,7 +123,68 @@ function initTwikoo(articleId) {
   document.head.appendChild(s);
 }
 
+var forbiddenWords = [
+  'fuck', 'shit', 'bitch', 'damn', 'ass', 'porn', 'sex', 'nude', 'xxx', '色情', '淫秽', '暴力', '恐怖', '毒品', 
+  '赌博', '诈骗', '传销', '反动', '分裂', '邪教', '极端', '辱骂', '侮辱', '诽谤', '造谣', '虚假', 
+  '违法', '违规', '作弊', '抄袭', '枪手', '代考', '办证', '发票', '贷款', '网贷', '套路贷', '高利贷',
+  '枪支', '弹药', '爆炸', '刀具', '凶器', '杀人', '自杀', '自残', '跳楼', '威胁', '恐吓', '敲诈',
+  '种族歧视', '地域歧视', '性别歧视', '歧视', '仇恨', '攻击', '人身攻击', '人肉', '隐私', '泄露',
+  '病毒', '木马', '黑客', '入侵', '破解', '盗号', '钓鱼', '诈骗', '刷单', '返利', '红包', '中奖',
+  '微信', 'QQ', '加群', '私聊', '联系方式', '微信号', 'QQ号', '电话号码', '手机号', '广告', '推广',
+  '出售', '转让', '收购', '交易', '买卖', '色情服务', '特殊服务', '上门', '约炮', '交友', '一夜情'
+];
+
+function containsForbiddenWord(text) {
+  if (!text) return false;
+  var lowerText = text.toLowerCase();
+  for (var i = 0; i < forbiddenWords.length; i++) {
+    if (lowerText.includes(forbiddenWords[i].toLowerCase())) {
+      return true;
+    }
+  }
+  return false;
+}
+
+function detectMaliciousContent(text) {
+  if (!text) return { safe: true, reason: '' };
+  
+  text = text.toLowerCase();
+  
+  var checks = [
+    { pattern: /(色情|淫秽|sex|porn|xxx|nude)/i, reason: '包含色情内容' },
+    { pattern: /(暴力|恐怖|杀人|自杀|自残)/i, reason: '包含暴力或危险内容' },
+    { pattern: /(毒品|赌博|诈骗|传销|邪教)/i, reason: '包含违法违规内容' },
+    { pattern: /(反动|分裂|极端)/i, reason: '包含政治敏感内容' },
+    { pattern: /(辱骂|侮辱|诽谤|造谣)/i, reason: '包含恶意攻击内容' },
+    { pattern: /(枪支|弹药|爆炸|刀具)/i, reason: '包含危险物品相关内容' },
+    { pattern: /(种族歧视|地域歧视|性别歧视|歧视)/i, reason: '包含歧视性内容' },
+    { pattern: /(病毒|木马|黑客|入侵|破解)/i, reason: '包含恶意技术内容' },
+    { pattern: /(刷单|返利|红包|中奖|广告)/i, reason: '包含广告营销内容' },
+    { pattern: /(微信号|QQ号|电话号码|手机号)/i, reason: '包含联系方式' },
+    { pattern: /(加群|私聊|联系我)/i, reason: '包含诱导私聊内容' },
+    { pattern: /(办证|发票|贷款|网贷)/i, reason: '包含违规服务内容' },
+    { pattern: /(约炮|交友|一夜情)/i, reason: '包含不良交友内容' }
+  ];
+  
+  for (var i = 0; i < checks.length; i++) {
+    if (checks[i].pattern.test(text)) {
+      return { safe: false, reason: checks[i].reason };
+    }
+  }
+  
+  if (containsForbiddenWord(text)) {
+    return { safe: false, reason: '包含不良词汇' };
+  }
+  
+  if (text.length > 5000) {
+    return { safe: false, reason: '内容过长' };
+  }
+  
+  return { safe: true, reason: '' };
+}
+
 function sanitizeInput(input) {
+  if (!input) return '';
   return input.replace(/&/g, '&amp;')
               .replace(/</g, '&lt;')
               .replace(/>/g, '&gt;')
@@ -608,6 +669,13 @@ function addComment(postId) {
   if (!user) { showModal('login'); return; }
   var content = document.getElementById('commentContent').value;
   if (!content.trim()) { alert('请输入评论内容'); return; }
+  
+  var safetyCheck = detectMaliciousContent(content);
+  if (!safetyCheck.safe) {
+    alert('评论内容包含违规信息：' + safetyCheck.reason + '，请修改后再发送');
+    return;
+  }
+  
   var posts = getStorage('posts') || [];
   var postIndex = posts.findIndex(function(p) { return p.id === postId; });
   if (postIndex === -1) return;
@@ -629,6 +697,18 @@ function createPost() {
   var location = document.getElementById('postLocation').value;
   var content = document.getElementById('postContent').value;
   if (!title || !content) { showMessage('postMessage', 'error', '请填写标题和内容'); return; }
+  
+  var titleSafety = detectMaliciousContent(title);
+  var contentSafety = detectMaliciousContent(content);
+  if (!titleSafety.safe) {
+    showMessage('postMessage', 'error', '标题包含违规信息：' + titleSafety.reason);
+    return;
+  }
+  if (!contentSafety.safe) {
+    showMessage('postMessage', 'error', '内容包含违规信息：' + contentSafety.reason);
+    return;
+  }
+  
   var posts = getStorage('posts') || [];
   posts.unshift({
     id: Date.now(),
@@ -788,6 +868,45 @@ function renderProfile() {
   document.getElementById('profilePosts').innerHTML = html || '<div class="empty-state"><div class="icon">📝</div><h3>暂无帖子</h3><p><button class="btn-outline" onclick="showModal(\'post\')">发布第一篇帖子</button></p></div>';
 }
 
+function getVideoEmbedUrl(url, platform) {
+  if (!url) return '';
+  
+  var embedUrl = '';
+  url = url.trim();
+  
+  switch(platform) {
+    case 'bilibili':
+      var bvidMatch = url.match(/BV[\w]+/) || url.match(/av\d+/);
+      var bvid = bvidMatch ? bvidMatch[0] : url;
+      embedUrl = 'https://player.bilibili.com/player.html?bvid=' + bvid + '&page=1';
+      break;
+    case 'douyin':
+      var videoId = url.match(/(\d+)/);
+      videoId = videoId ? videoId[0] : url;
+      embedUrl = 'https://www.douyin.com/embed/' + videoId;
+      break;
+    case 'youtube':
+      var videoId = url.match(/v=([^&]+)/);
+      videoId = videoId ? videoId[1] : url;
+      embedUrl = 'https://www.youtube.com/embed/' + videoId;
+      break;
+    case 'youku':
+      var videoId = url.match(/id_([^.]+)/);
+      videoId = videoId ? videoId[1] : url;
+      embedUrl = 'https://player.youku.com/embed/' + videoId;
+      break;
+    case 'iqiyi':
+      var videoId = url.match(/video\/([^/]+)/);
+      videoId = videoId ? videoId[1] : url;
+      embedUrl = 'https://www.iqiyi.com/embed/' + videoId;
+      break;
+    default:
+      embedUrl = url;
+  }
+  
+  return embedUrl;
+}
+
 function renderVideos() {
   var videos = getStorage('videos') || [];
   var users = getStorage('users') || [];
@@ -795,12 +914,15 @@ function renderVideos() {
   var html = '';
   videos.forEach(function(video) {
     var author = users.find(function(u) { return u.id === video.userId; }) || { nickname: '未知用户', avatar: '?' };
+    var platformIcon = video.platform === 'bilibili' ? '📺' : (video.platform === 'douyin' ? '🎵' : (video.platform === 'youtube' ? '▶️' : '🎬'));
+    var platformName = video.platform === 'bilibili' ? 'B站' : (video.platform === 'douyin' ? '抖音' : (video.platform === 'youtube' ? 'YouTube' : '视频'));
     html += '<div class="video-card" onclick="openVideo(' + video.id + ')">';
-    html += '<div class="video-thumbnail"></div>';
+    html += '<div class="video-thumbnail"><div class="video-play-icon">' + platformIcon + '</div></div>';
     html += '<div class="post-header"><div class="post-author"><div class="post-avatar">' + author.avatar + '</div><span>' + author.nickname + '</span></div><span class="tag">' + video.category + '</span></div>';
     if (video.location) html += '<span class="tag" style="background: rgba(6,182,212,0.1); color: var(--accent);">📍 ' + video.location + '</span>';
     html += '<h3>' + video.title + '</h3>';
-    html += '<p>发布于 ' + video.createdAt + '</p>';
+    if (video.description) html += '<p class="post-content">' + video.description.substring(0, 80) + (video.description.length > 80 ? '...' : '') + '</p>';
+    html += '<div class="post-meta"><span>' + platformName + '</span><span>发布于 ' + video.createdAt + '</span></div>';
     html += '</div>';
   });
   
@@ -816,11 +938,18 @@ function openVideo(videoId) {
   var users = getStorage('users') || [];
   var author = users.find(function(u) { return u.id === video.userId; }) || { nickname: '未知用户', avatar: '?' };
   
-  document.getElementById('videoPlayer').src = video.url;
+  var embedUrl = getVideoEmbedUrl(video.url, video.platform);
+  document.getElementById('videoPlayer').src = embedUrl;
   document.getElementById('videoTitle').textContent = video.title;
   document.getElementById('videoAuthor').textContent = author.nickname;
   document.getElementById('videoCategory').textContent = video.category;
   document.getElementById('videoDate').textContent = video.createdAt;
+  if (video.description) {
+    document.getElementById('videoDescription').textContent = video.description;
+    document.getElementById('videoDescription').style.display = 'block';
+  } else {
+    document.getElementById('videoDescription').style.display = 'none';
+  }
   
   document.querySelectorAll('.page-section').forEach(function(el) { el.classList.remove('active'); });
   document.getElementById('video-detail-page').classList.add('active');
@@ -833,7 +962,20 @@ function createVideo() {
   var title = document.getElementById('videoTitleInput').value;
   var category = document.getElementById('videoCategoryInput').value;
   var location = document.getElementById('videoLocationInput').value;
+  var platform = document.getElementById('videoPlatformInput').value;
   var url = document.getElementById('videoUrlInput').value;
+  var description = document.getElementById('videoDescriptionInput').value;
+  
+  var titleSafety = detectMaliciousContent(title);
+  var descSafety = detectMaliciousContent(description);
+  if (!titleSafety.safe) {
+    showMessage('videoMessage', 'error', '标题包含违规信息：' + titleSafety.reason);
+    return;
+  }
+  if (!descSafety.safe) {
+    showMessage('videoMessage', 'error', '描述包含违规信息：' + descSafety.reason);
+    return;
+  }
   
   if (!title || !url) { showMessage('videoMessage', 'error', '请填写标题和视频链接'); return; }
   
@@ -844,8 +986,12 @@ function createVideo() {
     title: title,
     category: category,
     location: location,
+    platform: platform,
     url: url,
-    createdAt: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-')
+    description: description,
+    createdAt: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-'),
+    likes: [],
+    comments: []
   });
   
   setStorage('videos', videos);
@@ -964,6 +1110,17 @@ function createResource() {
   var contact = document.getElementById('resourceContact').value;
   var phone = document.getElementById('resourcePhone').value;
   var content = document.getElementById('resourceContent').value;
+
+  var titleSafety = detectMaliciousContent(title);
+  var contentSafety = detectMaliciousContent(content);
+  if (!titleSafety.safe) {
+    showMessage('resourceMessage', 'error', '标题包含违规信息：' + titleSafety.reason);
+    return;
+  }
+  if (!contentSafety.safe) {
+    showMessage('resourceMessage', 'error', '内容包含违规信息：' + contentSafety.reason);
+    return;
+  }
 
   if (!title || !content) {
     showMessage('resourceMessage', 'error', '请填写标题和资源内容');
@@ -1118,6 +1275,17 @@ function createTimelineEvent() {
   var location = document.getElementById('eventLocation').value;
   var teams = document.getElementById('eventTeams').value;
   var description = document.getElementById('eventDescription').value;
+  
+  var titleSafety = detectMaliciousContent(title);
+  var descSafety = detectMaliciousContent(description);
+  if (!titleSafety.safe) {
+    showMessage('timeline-eventMessage', 'error', '标题包含违规信息：' + titleSafety.reason);
+    return;
+  }
+  if (!descSafety.safe) {
+    showMessage('timeline-eventMessage', 'error', '描述包含违规信息：' + descSafety.reason);
+    return;
+  }
   
   if (!title || !date) {
     showMessage('timeline-eventMessage', 'error', '请填写活动标题和日期');
