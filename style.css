@@ -553,6 +553,35 @@ footer a:hover { color: var(--primary); }
 .captcha-row { display: flex; gap: 10px; align-items: center; }
 .captcha-row input { flex: 1; }
 #captchaCanvas { width: 120px; height: 44px; background: rgba(255,255,255,0.05); border: 1px solid rgba(99,102,241,0.3); }
+.password-strength { margin-top: 8px; }
+.password-strength-bar { display: flex; gap: 4px; margin-bottom: 4px; }
+.password-strength-bar div { height: 6px; flex: 1; border-radius: 3px; background: rgba(255,255,255,0.1); }
+.password-strength-bar div.weak { background: var(--error); }
+.password-strength-bar div.medium { background: var(--warning); }
+.password-strength-bar div.strong { background: var(--success); }
+.password-strength-text { font-size: 12px; color: var(--text-muted); }
+.welcome-message { 
+  position: fixed; 
+  top: 100px; 
+  right: -300px; 
+  z-index: 9999; 
+  transition: right 0.5s ease;
+}
+.welcome-message.show { right: 20px; }
+.welcome-content { 
+  background: rgba(99,102,241,0.1); 
+  backdrop-filter: blur(20px); 
+  border: 1px solid rgba(99,102,241,0.3); 
+  border-radius: 12px; 
+  padding: 20px 25px; 
+  display: flex; 
+  align-items: center; 
+  gap: 15px;
+  box-shadow: 0 10px 40px rgba(99,102,241,0.2);
+}
+.welcome-icon { font-size: 36px; }
+.welcome-text h3 { margin: 0; color: var(--text-primary); font-size: 18px; }
+.welcome-text p { margin: 5px 0 0 0; color: var(--text-secondary); font-size: 14px; }
 .message { 
   padding: 12px 15px; 
   border-radius: 8px; 

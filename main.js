@@ -476,6 +476,66 @@ function verifyCaptcha() {
   return true;
 }
 
+function checkPasswordStrength(password) {
+  var bars = document.querySelectorAll('.password-strength-bar div');
+  var text = document.getElementById('passwordStrengthText');
+  
+  bars.forEach(function(bar) {
+    bar.className = '';
+  });
+  
+  if (!password) {
+    text.textContent = '请输入密码';
+    text.style.color = '';
+    return;
+  }
+  
+  var strength = 0;
+  if (password.length >= 6) strength++;
+  if (password.length >= 10) strength++;
+  if (/[A-Z]/.test(password)) strength++;
+  if (/[a-z]/.test(password)) strength++;
+  if (/[0-9]/.test(password)) strength++;
+  if (/[^A-Za-z0-9]/.test(password)) strength++;
+  
+  for (var i = 0; i < Math.min(strength, 4); i++) {
+    if (strength <= 2) {
+      bars[i].className = 'weak';
+    } else if (strength <= 3) {
+      bars[i].className = 'medium';
+    } else {
+      bars[i].className = 'strong';
+    }
+  }
+  
+  if (strength <= 2) {
+    text.textContent = '密码强度：弱';
+    text.style.color = 'var(--error)';
+  } else if (strength <= 3) {
+    text.textContent = '密码强度：中';
+    text.style.color = 'var(--warning)';
+  } else {
+    text.textContent = '密码强度：强';
+    text.style.color = 'var(--success)';
+  }
+}
+
+function checkPasswordMatch() {
+  var password = document.getElementById('registerPassword').value;
+  var confirmPassword = document.getElementById('registerConfirmPassword').value;
+  var text = document.getElementById('passwordStrengthText');
+  
+  if (!confirmPassword) return;
+  
+  if (password === confirmPassword) {
+    text.textContent = '✓ 两次密码一致';
+    text.style.color = 'var(--success)';
+  } else {
+    text.textContent = '✗ 两次密码不一致';
+    text.style.color = 'var(--error)';
+  }
+}
+
 function sendCaptcha() {
   var type = getCaptchaType();
   var btn = document.getElementById('sendCaptchaBtn');
@@ -626,7 +686,25 @@ function login() {
   setStorage('currentUser', foundUser);
   loadUser();
   closeModal('login');
-  showMessage('loginMessage', 'success', '登录成功！');
+  showWelcomeMessage(foundUser);
+}
+
+function showWelcomeMessage(user) {
+  var welcomeDiv = document.createElement('div');
+  welcomeDiv.className = 'welcome-message';
+  welcomeDiv.innerHTML = '<div class="welcome-content"><div class="welcome-icon">👋</div><div class="welcome-text"><h3>欢迎回来，' + user.nickname + '！</h3><p>' + user.school + ' · ' + user.studentId + '</p></div></div>';
+  document.body.appendChild(welcomeDiv);
+  
+  setTimeout(function() {
+    welcomeDiv.classList.add('show');
+  }, 100);
+  
+  setTimeout(function() {
+    welcomeDiv.classList.remove('show');
+    setTimeout(function() {
+      welcomeDiv.remove();
+    }, 500);
+  }, 3000);
 }
 
 function logout() {
