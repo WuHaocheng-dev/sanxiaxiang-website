@@ -429,130 +429,72 @@ function verifyRecaptcha() {
 }
 
 function sendCaptcha() {
-  if (!verifyRecaptcha()) {
-    return;
-  }
-  
   var type = getCaptchaType();
   var btn = document.getElementById('sendCaptchaBtn');
   
   btn.disabled = true;
-  btn.textContent = '发送中...';
+  btn.textContent = '获取中...';
   
   setTimeout(function() {
     if (type === 'phone') {
       var phone = document.getElementById('registerPhone').value;
       if (!phone) {
-        showMessage('registerMessage', 'error', '请先输入手机号');
+        showMessage('registerMessage', 'error', '❌ 请先输入手机号');
         btn.disabled = false;
-        btn.textContent = '发送验证码';
+        btn.textContent = '获取验证码';
         return;
       }
       var phoneRegex = /^1[3-9]\d{9}$/;
       if (!phoneRegex.test(phone)) {
-        showMessage('registerMessage', 'error', '请输入正确的手机号格式');
+        showMessage('registerMessage', 'error', '❌ 请输入正确的手机号格式（11位数字）');
         btn.disabled = false;
-        btn.textContent = '发送验证码';
+        btn.textContent = '获取验证码';
         return;
       }
       currentCaptcha = Math.floor(100000 + Math.random() * 900000).toString();
-      sendSms(phone, currentCaptcha, btn);
+      showMessage('registerMessage', 'success', '✅ 您的验证码是：<span style="font-size: 24px; font-weight: bold; color: #fbbf24; letter-spacing: 8px;">' + currentCaptcha + '</span>');
+      startCountdown(btn);
     } else {
       var email = document.getElementById('registerEmail').value;
       if (!email) {
-        showMessage('registerMessage', 'error', '请先输入邮箱');
+        showMessage('registerMessage', 'error', '❌ 请先输入邮箱');
         btn.disabled = false;
-        btn.textContent = '发送验证码';
+        btn.textContent = '获取验证码';
         return;
       }
       var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        showMessage('registerMessage', 'error', '请输入正确的邮箱格式');
+        showMessage('registerMessage', 'error', '❌ 请输入正确的邮箱格式');
         btn.disabled = false;
-        btn.textContent = '发送验证码';
+        btn.textContent = '获取验证码';
         return;
       }
       currentCaptcha = Math.random().toString(36).substring(2, 8).toUpperCase();
       sendEmailCode(email, currentCaptcha, btn);
     }
-  }, 500);
-}
-
-function sendSms(phone, code, btn) {
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'https://api.smsbao.com/sms', true);
-  xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        try {
-          var response = xhr.responseText;
-          if (response === '0') {
-            showMessage('registerMessage', 'success', '✅ 验证码 ' + code + ' 已发送至手机号 ' + phone.substring(0, 3) + '****' + phone.substring(7));
-            startCountdown(btn);
-          } else {
-            showMessage('registerMessage', 'error', '❌ 短信发送失败，请稍后重试');
-            btn.disabled = false;
-            btn.textContent = '发送验证码';
-          }
-        } catch (e) {
-          showMessage('registerMessage', 'success', '⚠️ 验证码 ' + code + ' 已生成，请查收短信');
-          startCountdown(btn);
-        }
-      } else {
-        showMessage('registerMessage', 'success', '⚠️ 验证码 ' + code + ' 已生成，请查收短信');
-        startCountdown(btn);
-      }
-    }
-  };
-  xhr.onerror = function() {
-    showMessage('registerMessage', 'success', '⚠️ 验证码 ' + code + ' 已生成，请查收短信');
-    startCountdown(btn);
-  };
-  xhr.send('u=sanxiaxiang&p=4a4a4a4a4a&m=' + phone + '&c=【三下乡平台】您的验证码是：' + code + '，5分钟内有效。');
+  }, 300);
 }
 
 function sendEmailCode(email, code, btn) {
-  var xhr = new XMLHttpRequest();
-  xhr.open('POST', 'https://api.smtp2go.com/v3/email/send', true);
-  xhr.setRequestHeader('Content-Type', 'application/json');
-  xhr.setRequestHeader('X-Smtp2go-Api-Key', 'api-xxx');
-  xhr.onreadystatechange = function() {
-    if (xhr.readyState === 4) {
-      if (xhr.status === 200) {
-        showMessage('registerMessage', 'success', '✅ 验证码 ' + code + ' 已发送至邮箱 ' + email);
-      } else {
-        showMessage('registerMessage', 'success', '⚠️ 验证码 ' + code + ' 已生成，请查收邮件');
-      }
-      startCountdown(btn);
-    }
-  };
-  xhr.onerror = function() {
-    showMessage('registerMessage', 'success', '⚠️ 验证码 ' + code + ' 已生成，请查收邮件');
+  var mailtoLink = 'mailto:' + email + '?subject=' + encodeURIComponent('三下乡平台验证码') + '&body=' + encodeURIComponent('您的验证码是：' + code + '，5分钟内有效。');
+  window.location.href = mailtoLink;
+  
+  setTimeout(function() {
+    showMessage('registerMessage', 'success', '✅ 邮件客户端已打开，请发送邮件获取验证码。您的验证码是：<span style="font-size: 24px; font-weight: bold; color: #fbbf24; letter-spacing: 8px;">' + code + '</span>');
     startCountdown(btn);
-  };
-  xhr.send(JSON.stringify({
-    'to': [{ 'email': email }],
-    'from': 'noreply@sanxiaxiang.com',
-    'subject': '三下乡平台验证码',
-    'text_body': '您的验证码是：' + code + '，5分钟内有效。'
-  }));
+  }, 500);
 }
 
 function startCountdown(btn) {
   var count = 60;
-  btn.textContent = count + '秒后重新发送';
+  btn.textContent = count + '秒后重新获取';
   captchaTimer = setInterval(function() {
     count--;
-    btn.textContent = count + '秒后重新发送';
+    btn.textContent = count + '秒后重新获取';
     if (count <= 0) {
       clearInterval(captchaTimer);
       btn.disabled = false;
-      btn.textContent = '发送验证码';
-      recaptchaToken = '';
-      if (typeof grecaptcha !== 'undefined') {
-        grecaptcha.reset();
-      }
+      btn.textContent = '获取验证码';
     }
   }, 1000);
 }
