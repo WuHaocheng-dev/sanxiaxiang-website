@@ -10,6 +10,7 @@
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   <title>三下乡优秀实践队伍经验交流平台</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://webapi.amap.com/maps?v=1.4.15&key=f7784cf15c511dddf5b04d35e49e244a"></script>
 </head>
 <body>
   <header>
@@ -20,7 +21,9 @@
         <li><a href="#" onclick="navigateTo('articles')">实践经验</a></li>
         <li><a href="#" onclick="navigateTo('gallery')">成果展厅</a></li>
         <li><a href="#" onclick="navigateTo('forum')">校园论坛</a></li>
+        <li><a href="#" onclick="navigateTo('resources')">📦 资源共享</a></li>
         <li><a href="#" onclick="navigateTo('videos')">视频分享</a></li>
+        <li><a href="#" onclick="navigateTo('contacts')">📍 负责人信息</a></li>
         <li><a href="#" onclick="navigateTo('messages')">💬 私信</a></li>
         <li id="auth-section">
           <button class="auth-btn login-btn" onclick="showModal('login')">登录</button>
@@ -79,20 +82,25 @@
           <h4>校园论坛</h4>
           <p>自由分享交流实践心得</p>
         </div>
+        <div class="quick-link" onclick="navigateTo('resources')">
+          <div class="icon">📦</div>
+          <h4>资源共享</h4>
+          <p>共享对接信息和联系方式</p>
+        </div>
         <div class="quick-link" onclick="navigateTo('videos')">
           <div class="icon">🎬</div>
           <h4>视频分享</h4>
           <p>观看实践精彩视频</p>
         </div>
+        <div class="quick-link" onclick="navigateTo('contacts')">
+          <div class="icon">📍</div>
+          <h4>负责人信息</h4>
+          <p>各地三下乡对接人联系方式</p>
+        </div>
         <div class="quick-link" onclick="navigateTo('messages')">
           <div class="icon">💌</div>
           <h4>私信交流</h4>
           <p>与其他同学即时沟通</p>
-        </div>
-        <div class="quick-link" onclick="openArticle('article1')">
-          <div class="icon">🍎</div>
-          <h4>苹果产业调研</h4>
-          <p>雷大镇屈岔村、合岘村调研纪实</p>
         </div>
       </section>
       <section class="articles-preview">
@@ -181,6 +189,24 @@
     </main>
   </section>
 
+  <section id="resources-page" class="page-section">
+    <main class="container">
+      <div class="forum-header">
+        <h1>📦 资源共享</h1>
+        <button class="btn-outline" onclick="showModal('resource')">发布资源</button>
+      </div>
+      <div class="category-filter">
+        <button class="category-btn active" onclick="filterResources('all')">全部</button>
+        <button class="category-btn" onclick="filterResources('对接信息')">对接信息</button>
+        <button class="category-btn" onclick="filterResources('联系方式')">联系方式</button>
+        <button class="category-btn" onclick="filterResources('实践资料')">实践资料</button>
+        <button class="category-btn" onclick="filterResources('调研报告')">调研报告</button>
+        <button class="category-btn" onclick="filterResources('其他')">其他</button>
+      </div>
+      <div id="resourceList"></div>
+    </main>
+  </section>
+
   <section id="videos-page" class="page-section">
     <main class="container">
       <div class="forum-header">
@@ -194,6 +220,16 @@
         <button class="category-btn" onclick="renderVideos()">直播</button>
       </div>
       <div id="videoList"></div>
+    </main>
+  </section>
+
+  <section id="contacts-page" class="page-section">
+    <main class="container">
+      <div class="forum-header">
+        <h1>📍 负责人信息</h1>
+        <button class="btn-outline" onclick="showModal('contact')">提交负责人信息</button>
+      </div>
+      <div id="contactList"></div>
     </main>
   </section>
 
@@ -229,7 +265,9 @@
         <h2 id="profileName"></h2>
         <p id="profileSchool"></p>
         <p id="profileStudentId"></p>
+        <p id="profilePhone"></p>
         <p id="profileEmail"></p>
+        <button class="btn-primary" id="verifyBtn" onclick="showModal('verify')" style="margin-top: 20px;">立即实名认证</button>
         <div class="profile-stats">
           <div class="profile-stat">
             <div class="number" id="profilePostCount">0</div>
@@ -322,7 +360,7 @@
   <footer>
     <div class="container">
       <p>&copy; 2026 三下乡优秀实践队伍经验交流平台</p>
-      <p>主办单位：自动化与电气工程学院 | 技术支持：25电气1班</p>
+      <p>由内蒙古科技大学萤火志愿服务队队员武皓程从无到有开发</p>
       <p><a href="#" onclick="navigateTo('home')">关于我们</a> | <a href="#" onclick="navigateTo('home')">联系我们</a></p>
     </div>
   </footer>
@@ -333,8 +371,8 @@
       <h2 class="modal-title">用户登录</h2>
       <div id="loginMessage"></div>
       <div class="form-group">
-        <label>账号</label>
-        <input type="text" id="loginAccount" placeholder="请输入邮箱或学号">
+        <label>账号（手机号/邮箱/学号）</label>
+        <input type="text" id="loginAccount" placeholder="请输入手机号、邮箱或学号">
       </div>
       <div class="form-group">
         <label>密码</label>
@@ -354,31 +392,42 @@
       <div id="registerMessage"></div>
       <div class="form-row">
         <div class="form-group">
-          <label>学校</label>
+          <label>学校 *</label>
           <input type="text" id="registerSchool" placeholder="请输入学校名称">
         </div>
         <div class="form-group">
-          <label>学号</label>
+          <label>学号 *</label>
           <input type="text" id="registerStudentId" placeholder="请输入学号">
         </div>
       </div>
       <div class="form-group">
+        <label>手机号 *</label>
+        <input type="tel" id="registerPhone" placeholder="请输入手机号">
+      </div>
+      <div class="form-group">
         <label>邮箱</label>
-        <input type="email" id="registerEmail" placeholder="请输入邮箱">
+        <input type="email" id="registerEmail" placeholder="请输入邮箱（选填）">
+      </div>
+      <div class="form-group">
+        <label>验证码接收方式</label>
+        <div class="captcha-options">
+          <label><input type="radio" name="captchaType" value="phone" checked onclick="toggleCaptchaMethod()"> 📱 手机短信</label>
+          <label><input type="radio" name="captchaType" value="email" onclick="toggleCaptchaMethod()"> 📧 邮箱验证</label>
+        </div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>验证码</label>
+          <label>验证码 *</label>
           <input type="text" id="registerCode" placeholder="请输入验证码">
         </div>
         <button class="captcha-btn" id="sendCaptchaBtn" onclick="sendCaptcha()">发送验证码</button>
       </div>
       <div class="form-group">
-        <label>密码</label>
+        <label>密码 *</label>
         <input type="password" id="registerPassword" placeholder="请输入密码">
       </div>
       <div class="form-group">
-        <label>确认密码</label>
+        <label>确认密码 *</label>
         <input type="password" id="registerConfirmPassword" placeholder="请再次输入密码">
       </div>
       <button class="btn-primary" onclick="register()">注 册</button>
@@ -408,6 +457,10 @@
         </select>
       </div>
       <div class="form-group">
+        <label>地点</label>
+        <input type="text" id="postLocation" placeholder="请输入实践地点（如：甘肃省静宁县雷大镇）">
+      </div>
+      <div class="form-group">
         <label>内容</label>
         <textarea id="postContent" placeholder="请输入帖子内容"></textarea>
       </div>
@@ -435,11 +488,110 @@
         </select>
       </div>
       <div class="form-group">
+        <label>地点</label>
+        <input type="text" id="videoLocationInput" placeholder="请输入视频拍摄地点">
+      </div>
+      <div class="form-group">
         <label>视频链接</label>
         <input type="text" id="videoUrlInput" placeholder="请输入YouTube/B站等视频链接">
       </div>
       <button class="btn-primary" onclick="createVideo()">发 布</button>
       <button class="btn-secondary" onclick="closeModal('video')">取 消</button>
+    </div>
+  </div>
+
+  <div class="modal" id="resourceModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('resource')">×</button>
+      <h2 class="modal-title">发布共享资源</h2>
+      <div id="resourceMessage"></div>
+      <div class="form-group">
+        <label>标题 *</label>
+        <input type="text" id="resourceTitle" placeholder="请输入资源标题">
+      </div>
+      <div class="form-group">
+        <label>分类 *</label>
+        <select id="resourceCategory">
+          <option value="对接信息">对接信息</option>
+          <option value="联系方式">联系方式</option>
+          <option value="实践资料">实践资料</option>
+          <option value="调研报告">调研报告</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>地点</label>
+        <input type="text" id="resourceLocation" placeholder="请输入相关地点（如：甘肃省静宁县雷大镇）">
+      </div>
+      <div class="form-group">
+        <label>联系人</label>
+        <input type="text" id="resourceContact" placeholder="请输入联系人姓名">
+      </div>
+      <div class="form-group">
+        <label>联系电话</label>
+        <input type="tel" id="resourcePhone" placeholder="请输入联系电话">
+      </div>
+      <div class="form-group">
+        <label>资源内容 *</label>
+        <textarea id="resourceContent" placeholder="请详细描述资源内容，包括对接流程、注意事项等"></textarea>
+      </div>
+      <button class="btn-primary" onclick="createResource()">发 布</button>
+      <button class="btn-secondary" onclick="closeModal('resource')">取 消</button>
+    </div>
+  </div>
+
+  <div class="modal" id="contactModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('contact')">×</button>
+      <h2 class="modal-title">提交负责人信息</h2>
+      <div id="contactMessage"></div>
+      <div class="form-group">
+        <label>姓名 *</label>
+        <input type="text" id="contactName" placeholder="请输入负责人姓名">
+      </div>
+      <div class="form-group">
+        <label>电话 *</label>
+        <input type="tel" id="contactPhone" placeholder="请输入联系电话">
+      </div>
+      <div class="form-group">
+        <label>地点 *</label>
+        <input type="text" id="contactLocation" placeholder="请输入地点（如：甘肃省静宁县雷大镇）">
+      </div>
+      <div class="form-group">
+        <label>职务</label>
+        <input type="text" id="contactRole" placeholder="请输入职务">
+      </div>
+      <div class="form-group">
+        <label>介绍</label>
+        <textarea id="contactDescription" placeholder="请输入负责人介绍或备注信息"></textarea>
+      </div>
+      <button class="btn-primary" onclick="submitContact()">提 交</button>
+      <button class="btn-secondary" onclick="closeModal('contact')">取 消</button>
+    </div>
+  </div>
+
+  <div class="modal" id="verifyModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('verify')">×</button>
+      <h2 class="modal-title">实名认证</h2>
+      <div id="verifyMessage"></div>
+      <div class="form-group">
+        <label>真实姓名 *</label>
+        <input type="text" id="verifyRealName" placeholder="请输入真实姓名">
+      </div>
+      <div class="form-group">
+        <label>手机号 *</label>
+        <input type="tel" id="verifyPhone" placeholder="请输入注册时的手机号">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>验证码 *</label>
+          <input type="text" id="verifyCode" placeholder="请输入验证码">
+        </div>
+        <button class="captcha-btn" id="sendVerifyCaptchaBtn" onclick="sendVerifyCaptcha()">发送验证码</button>
+      </div>
+      <button class="btn-primary" onclick="verifyUser()">完成认证</button>
+      <button class="btn-secondary" onclick="closeModal('verify')">取 消</button>
     </div>
   </div>
 
