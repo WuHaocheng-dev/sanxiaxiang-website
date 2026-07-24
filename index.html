@@ -18,10 +18,14 @@
       <div class="logo" onclick="navigateTo('home')">三下乡交流平台</div>
       <ul class="nav-links" id="navLinks">
         <li><a href="#" onclick="navigateTo('home')" class="active">首页</a></li>
+        <li><a href="#" onclick="navigateTo('timeline')">📅 活动时间线</a></li>
+        <li><a href="#" onclick="navigateTo('teams')">👥 队伍档案</a></li>
         <li><a href="#" onclick="navigateTo('articles')">实践经验</a></li>
         <li><a href="#" onclick="navigateTo('gallery')">成果展厅</a></li>
         <li><a href="#" onclick="navigateTo('forum')">校园论坛</a></li>
         <li><a href="#" onclick="navigateTo('resources')">📦 资源共享</a></li>
+        <li><a href="#" onclick="navigateTo('downloads')">📥 资料下载</a></li>
+        <li><a href="#" onclick="navigateTo('faq')">❓ 问答知识库</a></li>
         <li><a href="#" onclick="navigateTo('videos')">视频分享</a></li>
         <li><a href="#" onclick="navigateTo('contacts')">📍 负责人信息</a></li>
         <li><a href="#" onclick="navigateTo('messages')">💬 私信</a></li>
@@ -116,6 +120,77 @@
           <span class="read-more">阅读全文 ›</span>
         </article>
       </section>
+    </main>
+  </section>
+
+  <section id="timeline-page" class="page-section">
+    <main class="container">
+      <div class="forum-header">
+        <h1>📅 活动时间线</h1>
+        <button class="btn-outline" onclick="showModal('timeline-event')">添加活动</button>
+      </div>
+      <div class="year-filter">
+        <button class="year-btn" onclick="filterTimeline('all')">全部年份</button>
+        <button class="year-btn" onclick="filterTimeline('2026')">2026年</button>
+        <button class="year-btn" onclick="filterTimeline('2025')">2025年</button>
+        <button class="year-btn" onclick="filterTimeline('2024')">2024年</button>
+        <button class="year-btn" onclick="filterTimeline('2023')">2023年</button>
+      </div>
+      <div id="timelineContainer"></div>
+    </main>
+  </section>
+
+  <section id="teams-page" class="page-section">
+    <main class="container">
+      <div class="forum-header">
+        <h1>👥 实践队伍档案</h1>
+        <button class="btn-outline" onclick="showModal('team')">创建队伍</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="teamSearch" placeholder="搜索队伍名称、学校..." oninput="searchTeams()">
+        <button class="btn-primary" onclick="searchTeams()" style="width: auto;">搜索</button>
+      </div>
+      <div id="teamList"></div>
+    </main>
+  </section>
+
+  <section id="downloads-page" class="page-section">
+    <main class="container">
+      <div class="forum-header">
+        <h1>📥 资料下载中心</h1>
+        <button class="btn-outline" onclick="showModal('download')">上传资料</button>
+      </div>
+      <div class="category-filter">
+        <button class="category-btn active" onclick="filterDownloads('all')">全部</button>
+        <button class="category-btn" onclick="filterDownloads('调研报告')">调研报告</button>
+        <button class="category-btn" onclick="filterDownloads('申报材料')">申报材料</button>
+        <button class="category-btn" onclick="filterDownloads('安全手册')">安全手册</button>
+        <button class="category-btn" onclick="filterDownloads('宣传资料')">宣传资料</button>
+        <button class="category-btn" onclick="filterDownloads('其他')">其他</button>
+      </div>
+      <div id="downloadList"></div>
+    </main>
+  </section>
+
+  <section id="faq-page" class="page-section">
+    <main class="container">
+      <div class="forum-header">
+        <h1>❓ 问答知识库</h1>
+        <button class="btn-outline" onclick="showModal('faq')">提问</button>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="faqSearch" placeholder="搜索问题..." oninput="searchFaq()">
+        <button class="btn-primary" onclick="searchFaq()" style="width: auto;">搜索</button>
+      </div>
+      <div class="category-filter">
+        <button class="category-btn active" onclick="filterFaq('all')">全部</button>
+        <button class="category-btn" onclick="filterFaq('申报流程')">申报流程</button>
+        <button class="category-btn" onclick="filterFaq('实践准备')">实践准备</button>
+        <button class="category-btn" onclick="filterFaq('安全问题')">安全问题</button>
+        <button class="category-btn" onclick="filterFaq('调研报告')">调研报告</button>
+        <button class="category-btn" onclick="filterFaq('其他')">其他</button>
+      </div>
+      <div id="faqList"></div>
     </main>
   </section>
 
@@ -497,6 +572,142 @@
       </div>
       <button class="btn-primary" onclick="createVideo()">发 布</button>
       <button class="btn-secondary" onclick="closeModal('video')">取 消</button>
+    </div>
+  </div>
+
+  <div class="modal" id="timeline-eventModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('timeline-event')">×</button>
+      <h2 class="modal-title">添加活动记录</h2>
+      <div id="timeline-eventMessage"></div>
+      <div class="form-group">
+        <label>活动标题 *</label>
+        <input type="text" id="eventTitle" placeholder="请输入活动标题">
+      </div>
+      <div class="form-group">
+        <label>活动日期 *</label>
+        <input type="date" id="eventDate">
+      </div>
+      <div class="form-group">
+        <label>活动地点</label>
+        <input type="text" id="eventLocation" placeholder="请输入活动地点">
+      </div>
+      <div class="form-group">
+        <label>参与队伍</label>
+        <input type="text" id="eventTeams" placeholder="参与队伍名称">
+      </div>
+      <div class="form-group">
+        <label>活动描述</label>
+        <textarea id="eventDescription" placeholder="请描述活动内容和成果"></textarea>
+      </div>
+      <button class="btn-primary" onclick="createTimelineEvent()">添 加</button>
+      <button class="btn-secondary" onclick="closeModal('timeline-event')">取 消</button>
+    </div>
+  </div>
+
+  <div class="modal" id="teamModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('team')">×</button>
+      <h2 class="modal-title">创建实践队伍</h2>
+      <div id="teamMessage"></div>
+      <div class="form-group">
+        <label>队伍名称 *</label>
+        <input type="text" id="teamName" placeholder="请输入队伍名称">
+      </div>
+      <div class="form-group">
+        <label>所属学校 *</label>
+        <input type="text" id="teamSchool" placeholder="请输入学校名称">
+      </div>
+      <div class="form-group">
+        <label>带队老师</label>
+        <input type="text" id="teamAdvisor" placeholder="请输入带队老师姓名">
+      </div>
+      <div class="form-group">
+        <label>队长姓名 *</label>
+        <input type="text" id="teamLeader" placeholder="请输入队长姓名">
+      </div>
+      <div class="form-group">
+        <label>队长电话</label>
+        <input type="tel" id="teamLeaderPhone" placeholder="请输入队长电话">
+      </div>
+      <div class="form-group">
+        <label>队员人数 *</label>
+        <input type="number" id="teamMembers" placeholder="请输入队员人数" min="1">
+      </div>
+      <div class="form-group">
+        <label>实践主题 *</label>
+        <input type="text" id="teamTopic" placeholder="请输入实践主题">
+      </div>
+      <div class="form-group">
+        <label>实践地点</label>
+        <input type="text" id="teamLocation" placeholder="请输入实践地点">
+      </div>
+      <div class="form-group">
+        <label>队伍简介</label>
+        <textarea id="teamDescription" placeholder="请描述队伍情况和实践目标"></textarea>
+      </div>
+      <button class="btn-primary" onclick="createTeam()">创 建</button>
+      <button class="btn-secondary" onclick="closeModal('team')">取 消</button>
+    </div>
+  </div>
+
+  <div class="modal" id="downloadModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('download')">×</button>
+      <h2 class="modal-title">上传共享资料</h2>
+      <div id="downloadMessage"></div>
+      <div class="form-group">
+        <label>资料名称 *</label>
+        <input type="text" id="downloadName" placeholder="请输入资料名称">
+      </div>
+      <div class="form-group">
+        <label>资料分类 *</label>
+        <select id="downloadCategory">
+          <option value="调研报告">调研报告</option>
+          <option value="申报材料">申报材料</option>
+          <option value="安全手册">安全手册</option>
+          <option value="宣传资料">宣传资料</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>资料描述</label>
+        <textarea id="downloadDescription" placeholder="请描述资料内容"></textarea>
+      </div>
+      <div class="form-group">
+        <label>下载链接 *</label>
+        <input type="text" id="downloadUrl" placeholder="请输入网盘或文件链接">
+      </div>
+      <button class="btn-primary" onclick="createDownload()">上 传</button>
+      <button class="btn-secondary" onclick="closeModal('download')">取 消</button>
+    </div>
+  </div>
+
+  <div class="modal" id="faqModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('faq')">×</button>
+      <h2 class="modal-title">提问</h2>
+      <div id="faqMessage"></div>
+      <div class="form-group">
+        <label>问题分类 *</label>
+        <select id="faqCategory">
+          <option value="申报流程">申报流程</option>
+          <option value="实践准备">实践准备</option>
+          <option value="安全问题">安全问题</option>
+          <option value="调研报告">调研报告</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>问题标题 *</label>
+        <input type="text" id="faqTitle" placeholder="请输入问题标题">
+      </div>
+      <div class="form-group">
+        <label>问题描述 *</label>
+        <textarea id="faqContent" placeholder="请详细描述你的问题"></textarea>
+      </div>
+      <button class="btn-primary" onclick="createFaq()">提 问</button>
+      <button class="btn-secondary" onclick="closeModal('faq')">取 消</button>
     </div>
   </div>
 

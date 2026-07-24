@@ -47,7 +47,11 @@ function navigateTo(pageId) {
   document.getElementById('navLinks').classList.remove('active');
   window.scrollTo({ top: 0, behavior: 'smooth' });
   if (pageId === 'forum') renderPosts();
+  if (pageId === 'timeline') renderTimeline();
+  if (pageId === 'teams') renderTeams();
   if (pageId === 'resources') renderResources();
+  if (pageId === 'downloads') renderDownloads();
+  if (pageId === 'faq') renderFaq();
   if (pageId === 'messages') loadContacts();
   if (pageId === 'profile') renderProfile();
   if (pageId === 'videos') renderVideos();
@@ -243,6 +247,46 @@ function initMockData() {
       { id: 2, userId: 2, title: '静宁县苹果产业调研报告模板', category: '调研报告', location: '', contact: '', phone: '', content: '分享一份苹果产业调研报告模板，包含调研问卷、数据分析表格、报告撰写框架等，非常实用！', createdAt: '2026-07-22 15:30', views: 89 },
       { id: 3, userId: 1, title: '界石铺长征纪念馆对接联系方式', category: '联系方式', location: '甘肃省静宁县界石铺镇', contact: '李书记', phone: '13900139002', content: '界石铺长征纪念馆位于甘肃省静宁县界石铺镇，是红色研学的重要地点。李书记可协助安排参观讲解、重温入党誓词等活动。', createdAt: '2026-07-21 09:00', views: 67 },
       { id: 4, userId: 3, title: '三下乡实践安全手册', category: '实践资料', location: '', contact: '', phone: '', content: '暑期三下乡实践安全注意事项：1. 提前了解当地天气情况；2. 注意交通安全；3. 尊重当地风俗习惯；4. 保持通讯畅通；5. 随身携带常用药品。', createdAt: '2026-07-24 11:00', views: 156 }
+    ]);
+  }
+  var timeline = getStorage('timeline');
+  if (!timeline || timeline.length === 0) {
+    setStorage('timeline', [
+      { id: 1, title: '2026年暑期三下乡活动启动', date: '2026-07-01', location: '内蒙古科技大学', teams: '萤火志愿服务队等', description: '2026年暑期三下乡社会实践活动正式启动，各实践队伍开始筹备工作。', type: 'start' },
+      { id: 2, title: '萤火志愿服务队出征仪式', date: '2026-07-15', location: '内蒙古科技大学', teams: '萤火志愿服务队', description: '萤火志愿服务队举行出征仪式，队员们整装待发，前往甘肃省静宁县开展实践活动。', type: 'event' },
+      { id: 3, title: '雷大镇苹果产业调研', date: '2026-07-18', location: '甘肃省静宁县雷大镇', teams: '萤火志愿服务队', description: '实践队伍深入雷大镇屈岔村、合岘村开展苹果产业调研，走访果农30余户。', type: 'activity' },
+      { id: 4, title: '界石铺红色研学', date: '2026-07-20', location: '甘肃省静宁县界石铺镇', teams: '萤火志愿服务队', description: '前往界石铺长征纪念馆开展红色研学活动，重温入党誓词，传承红色基因。', type: 'activity' },
+      { id: 5, title: '实践成果汇报', date: '2026-08-20', location: '内蒙古科技大学', teams: '各实践队伍', description: '2026年暑期三下乡社会实践成果汇报大会，各队伍分享实践经验和成果。', type: 'end' },
+      { id: 6, title: '2025年暑期三下乡活动', date: '2025-07-10', location: '内蒙古科技大学', teams: '各实践队伍', description: '2025年暑期三下乡活动圆满结束，共派出28支队伍，覆盖甘肃、宁夏、青海等地。', type: 'start' },
+      { id: 7, title: '2024年暑期三下乡活动', date: '2024-07-05', location: '内蒙古科技大学', teams: '各实践队伍', description: '2024年暑期三下乡活动顺利开展，重点围绕乡村振兴主题开展实践。', type: 'start' }
+    ]);
+  }
+  var teams = getStorage('teams');
+  if (!teams || teams.length === 0) {
+    setStorage('teams', [
+      { id: 1, name: '萤火志愿服务队', school: '内蒙古科技大学', advisor: '王老师', leader: '武皓程', leaderPhone: '13800138001', members: 12, topic: '乡村产业调研与红色研学', location: '甘肃省静宁县', description: '萤火志愿服务队成立于2023年，主要开展乡村产业调研、红色文化传承、助农帮扶等实践活动。', createdAt: '2026-07-15', achievements: ['2025年校级优秀实践队伍', '2024年省级实践成果三等奖'] },
+      { id: 2, name: '星火实践团', school: '内蒙古科技大学', advisor: '李老师', leader: '张三', leaderPhone: '13800138002', members: 8, topic: '乡村教育帮扶', location: '宁夏回族自治区西吉县', description: '星火实践团致力于乡村教育事业，开展支教活动，帮助农村儿童提升学习成绩。', createdAt: '2026-07-10', achievements: ['2025年校级优秀实践队伍'] },
+      { id: 3, name: '绿源环保服务队', school: '内蒙古科技大学', advisor: '赵老师', leader: '李四', leaderPhone: '13800138003', members: 10, topic: '农村环境保护调研', location: '青海省海东市', description: '绿源环保服务队关注农村生态环境问题，开展环保宣传和调研活动。', createdAt: '2026-07-08', achievements: [] }
+    ]);
+  }
+  var downloads = getStorage('downloads');
+  if (!downloads || downloads.length === 0) {
+    setStorage('downloads', [
+      { id: 1, name: '三下乡调研报告模板', category: '调研报告', description: '包含调研问卷模板、数据分析表格、报告撰写框架等，适用于各类实践调研报告撰写。', url: '#', downloads: 356, createdAt: '2026-07-20' },
+      { id: 2, name: '三下乡活动申报书模板', category: '申报材料', description: '校级三下乡活动申报书模板，包含申报要求、可行性分析、实施方案等内容。', url: '#', downloads: 289, createdAt: '2026-07-18' },
+      { id: 3, name: '暑期实践安全手册', category: '安全手册', description: '暑期社会实践安全注意事项，包含交通安全、食品安全、应急处理等内容。', url: '#', downloads: 421, createdAt: '2026-07-15' },
+      { id: 4, name: '实践活动宣传海报模板', category: '宣传资料', description: '三下乡实践活动宣传海报设计模板，包含多种风格和格式。', url: '#', downloads: 156, createdAt: '2026-07-12' },
+      { id: 5, name: '实践日志模板', category: '其他', description: '每日实践日志记录模板，帮助队员记录每天的实践经历和收获。', url: '#', downloads: 198, createdAt: '2026-07-10' }
+    ]);
+  }
+  var faq = getStorage('faq');
+  if (!faq || faq.length === 0) {
+    setStorage('faq', [
+      { id: 1, category: '申报流程', title: '三下乡活动如何申报？', content: '三下乡活动申报流程如下：1. 登录学校团委网站下载申报表格；2. 填写申报书，包括实践主题、方案、团队成员等；3. 提交学院审核；4. 学校团委审批；5. 审批通过后开展实践活动。', answers: [{ userId: 1, content: '补充：申报时间一般在每年5-6月份，请关注学校通知。', createdAt: '2026-07-20' }], views: 520, solved: true },
+      { id: 2, category: '实践准备', title: '出发前需要做哪些准备？', content: '出发前建议做好以下准备：1. 了解目的地气候和环境；2. 准备好必要的生活用品和药品；3. 与当地对接人联系确认行程；4. 制定详细的实践方案；5. 购买保险；6. 准备好调研问卷和记录工具。', answers: [], views: 389, solved: false },
+      { id: 3, category: '安全问题', title: '实践过程中如何保障安全？', content: '实践过程中安全第一：1. 保持通讯畅通；2. 遵守团队纪律，不单独行动；3. 注意饮食卫生；4. 了解当地风俗习惯；5. 遇到突发事件及时联系带队老师和当地警方。', answers: [{ userId: 2, content: '建议提前了解当地的紧急联系方式！', createdAt: '2026-07-21' }], views: 456, solved: true },
+      { id: 4, category: '调研报告', title: '调研报告怎么写？', content: '调研报告一般包含以下部分：1. 调研背景和目的；2. 调研方法；3. 调研结果与分析；4. 问题与建议；5. 实践感悟。建议参考网站提供的调研报告模板。', answers: [], views: 287, solved: false },
+      { id: 5, category: '其他', title: '实践结束后需要提交哪些材料？', content: '实践结束后一般需要提交：1. 实践报告；2. 实践日志；3. 照片和视频资料；4. 实践成果（如调研报告、宣传材料等）；5. 团队总结。具体要求以学校通知为准。', answers: [], views: 234, solved: false }
     ]);
   }
 }
@@ -1022,3 +1066,300 @@ document.getElementById('chatInput').addEventListener('keypress', function(e) {
     sendMessage();
   }
 });
+
+function renderTimeline(year) {
+  var timeline = getStorage('timeline') || [];
+  var filteredTimeline = year === 'all' ? timeline : timeline.filter(function(t) { return t.date.startsWith(year); });
+  
+  filteredTimeline.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
+  
+  var yearGroups = {};
+  filteredTimeline.forEach(function(t) {
+    var year = t.date.substring(0, 4);
+    if (!yearGroups[year]) yearGroups[year] = [];
+    yearGroups[year].push(t);
+  });
+  
+  var html = '';
+  var years = Object.keys(yearGroups).sort(function(a, b) { return b - a; });
+  
+  years.forEach(function(y) {
+    html += '<div class="timeline-year"><h2>' + y + '年</h2></div>';
+    html += '<div class="timeline-list">';
+    yearGroups[y].forEach(function(event) {
+      var typeIcon = event.type === 'start' ? '🚀' : (event.type === 'end' ? '🏆' : (event.type === 'activity' ? '📍' : '📅'));
+      var typeColor = event.type === 'start' ? 'border-left: 4px solid var(--success);' : (event.type === 'end' ? 'border-left: 4px solid var(--warning);' : (event.type === 'activity' ? 'border-left: 4px solid var(--accent);' : 'border-left: 4px solid var(--primary);'));
+      html += '<div class="timeline-item" style="' + typeColor + '">';
+      html += '<div class="timeline-date">' + event.date + '</div>';
+      html += '<div class="timeline-content">';
+      html += '<div class="timeline-header"><span class="timeline-icon">' + typeIcon + '</span><h3>' + event.title + '</h3></div>';
+      if (event.location) html += '<p><strong>📍</strong> ' + event.location + '</p>';
+      if (event.teams) html += '<p><strong>👥</strong> ' + event.teams + '</p>';
+      if (event.description) html += '<p>' + event.description + '</p>';
+      html += '</div></div>';
+    });
+    html += '</div>';
+  });
+  
+  document.getElementById('timelineContainer').innerHTML = html || '<div class="empty-state"><div class="icon">📅</div><h3>暂无活动记录</h3><p>快来添加第一条活动记录吧！</p></div>';
+}
+
+function filterTimeline(year) {
+  document.querySelectorAll('.year-btn').forEach(function(btn) { btn.classList.remove('active'); });
+  event.target.classList.add('active');
+  renderTimeline(year);
+}
+
+function createTimelineEvent() {
+  if (!user) { showModal('login'); return; }
+  
+  var title = document.getElementById('eventTitle').value;
+  var date = document.getElementById('eventDate').value;
+  var location = document.getElementById('eventLocation').value;
+  var teams = document.getElementById('eventTeams').value;
+  var description = document.getElementById('eventDescription').value;
+  
+  if (!title || !date) {
+    showMessage('timeline-eventMessage', 'error', '请填写活动标题和日期');
+    return;
+  }
+  
+  var timeline = getStorage('timeline') || [];
+  timeline.unshift({
+    id: Date.now(),
+    title: title,
+    date: date,
+    location: location,
+    teams: teams,
+    description: description,
+    type: 'event'
+  });
+  setStorage('timeline', timeline);
+  
+  closeModal('timeline-event');
+  navigateTo('timeline');
+}
+
+function renderTeams() {
+  var teams = getStorage('teams') || [];
+  var searchTerm = document.getElementById('teamSearch').value.toLowerCase();
+  
+  var filteredTeams = teams.filter(function(t) {
+    return t.name.toLowerCase().includes(searchTerm) || 
+           t.school.toLowerCase().includes(searchTerm) ||
+           t.topic.toLowerCase().includes(searchTerm);
+  });
+  
+  var html = '';
+  filteredTeams.forEach(function(team) {
+    html += '<div class="team-card">';
+    html += '<div class="team-header"><h3>' + team.name + '</h3><span class="tag">' + team.school + '</span></div>';
+    html += '<div class="team-info">';
+    html += '<p><strong>👤 队长：</strong>' + team.leader + '</p>';
+    if (team.leaderPhone) html += '<p><strong>📞 电话：</strong><span style="color: var(--accent);">' + team.leaderPhone + '</span></p>';
+    html += '<p><strong>👥 队员：</strong>' + team.members + '人</p>';
+    html += '<p><strong>📚 主题：</strong>' + team.topic + '</p>';
+    html += '<p><strong>📍 地点：</strong>' + team.location + '</p>';
+    if (team.advisor) html += '<p><strong>🎓 带队老师：</strong>' + team.advisor + '</p>';
+    html += '</div>';
+    if (team.description) html += '<p class="team-description">' + team.description + '</p>';
+    if (team.achievements && team.achievements.length > 0) {
+      html += '<div class="team-achievements"><strong>🏆 荣誉：</strong>';
+      team.achievements.forEach(function(a) { html += '<span class="tag" style="background: rgba(245,158,11,0.1); color: var(--warning);">' + a + '</span>'; });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  
+  document.getElementById('teamList').innerHTML = html || '<div class="empty-state"><div class="icon">👥</div><h3>暂无队伍</h3><p>快来创建第一支实践队伍吧！</p></div>';
+}
+
+function searchTeams() {
+  renderTeams();
+}
+
+function createTeam() {
+  if (!user) { showModal('login'); return; }
+  
+  var name = document.getElementById('teamName').value;
+  var school = document.getElementById('teamSchool').value;
+  var advisor = document.getElementById('teamAdvisor').value;
+  var leader = document.getElementById('teamLeader').value;
+  var leaderPhone = document.getElementById('teamLeaderPhone').value;
+  var members = document.getElementById('teamMembers').value;
+  var topic = document.getElementById('teamTopic').value;
+  var location = document.getElementById('teamLocation').value;
+  var description = document.getElementById('teamDescription').value;
+  
+  if (!name || !school || !leader || !members || !topic) {
+    showMessage('teamMessage', 'error', '请填写所有必填字段');
+    return;
+  }
+  
+  if (leaderPhone && !/^1[3-9]\d{9}$/.test(leaderPhone)) {
+    showMessage('teamMessage', 'error', '请输入正确的手机号格式');
+    return;
+  }
+  
+  var teams = getStorage('teams') || [];
+  teams.unshift({
+    id: Date.now(),
+    name: name,
+    school: school,
+    advisor: advisor,
+    leader: leader,
+    leaderPhone: leaderPhone,
+    members: parseInt(members),
+    topic: topic,
+    location: location,
+    description: description,
+    createdAt: new Date().toLocaleDateString('zh-CN').replace(/\//g, '-'),
+    achievements: []
+  });
+  setStorage('teams', teams);
+  
+  closeModal('team');
+  navigateTo('teams');
+}
+
+function renderDownloads(category) {
+  var downloads = getStorage('downloads') || [];
+  var filteredDownloads = category === 'all' ? downloads : downloads.filter(function(d) { return d.category === category; });
+  
+  var html = '';
+  filteredDownloads.forEach(function(d) {
+    html += '<div class="download-card">';
+    html += '<div class="download-header"><span class="download-icon">📄</span><div><h3>' + d.name + '</h3><span class="tag">' + d.category + '</span></div></div>';
+    if (d.description) html += '<p>' + d.description + '</p>';
+    html += '<div class="download-footer">';
+    html += '<span>📥 ' + (d.downloads || 0) + ' 次下载</span>';
+    html += '<span>📅 ' + d.createdAt + '</span>';
+    html += '<a href="' + d.url + '" class="btn-outline" target="_blank">下载</a>';
+    html += '</div></div>';
+  });
+  
+  document.getElementById('downloadList').innerHTML = html || '<div class="empty-state"><div class="icon">📥</div><h3>暂无资料</h3><p>快来上传第一份资料吧！</p></div>';
+}
+
+function filterDownloads(category) {
+  document.querySelectorAll('.category-btn').forEach(function(btn) { btn.classList.remove('active'); });
+  event.target.classList.add('active');
+  renderDownloads(category);
+}
+
+function createDownload() {
+  if (!user) { showModal('login'); return; }
+  
+  var name = document.getElementById('downloadName').value;
+  var category = document.getElementById('downloadCategory').value;
+  var description = document.getElementById('downloadDescription').value;
+  var url = document.getElementById('downloadUrl').value;
+  
+  if (!name || !url) {
+    showMessage('downloadMessage', 'error', '请填写资料名称和下载链接');
+    return;
+  }
+  
+  var downloads = getStorage('downloads') || [];
+  downloads.unshift({
+    id: Date.now(),
+    name: name,
+    category: category,
+    description: description,
+    url: url,
+    downloads: 0,
+    createdAt: new Date().toLocaleDateString('zh-CN').replace(/\//g, '-')
+  });
+  setStorage('downloads', downloads);
+  
+  closeModal('download');
+  navigateTo('downloads');
+}
+
+function renderFaq() {
+  var faq = getStorage('faq') || [];
+  var searchTerm = document.getElementById('faqSearch').value.toLowerCase();
+  
+  var filteredFaq = faq.filter(function(q) {
+    return q.title.toLowerCase().includes(searchTerm) || 
+           q.content.toLowerCase().includes(searchTerm);
+  });
+  
+  var html = '';
+  filteredFaq.forEach(function(q) {
+    var solvedIcon = q.solved ? '✅' : '❓';
+    html += '<div class="faq-card">';
+    html += '<div class="faq-header"><span>' + solvedIcon + '</span><h3>' + q.title + '</h3><span class="tag">' + q.category + '</span></div>';
+    html += '<div class="faq-content">' + q.content + '</div>';
+    html += '<div class="faq-meta"><span>👁️ ' + q.views + '</span><span>💬 ' + (q.answers ? q.answers.length : 0) + ' 回答</span></div>';
+    if (q.answers && q.answers.length > 0) {
+      html += '<div class="faq-answers">';
+      q.answers.forEach(function(a) {
+        html += '<div class="faq-answer"><div class="answer-author"><div class="post-avatar" style="width: 24px; height: 24px; font-size: 12px;">答</div><span>热心网友</span></div><p>' + a.content + '</p></div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  
+  document.getElementById('faqList').innerHTML = html || '<div class="empty-state"><div class="icon">❓</div><h3>暂无问题</h3><p>快来提出第一个问题吧！</p></div>';
+}
+
+function filterFaq(category) {
+  document.querySelectorAll('.category-btn').forEach(function(btn) { btn.classList.remove('active'); });
+  event.target.classList.add('active');
+  var faq = getStorage('faq') || [];
+  var filteredFaq = category === 'all' ? faq : faq.filter(function(q) { return q.category === category; });
+  document.getElementById('faqSearch').value = '';
+  
+  var html = '';
+  filteredFaq.forEach(function(q) {
+    var solvedIcon = q.solved ? '✅' : '❓';
+    html += '<div class="faq-card">';
+    html += '<div class="faq-header"><span>' + solvedIcon + '</span><h3>' + q.title + '</h3><span class="tag">' + q.category + '</span></div>';
+    html += '<div class="faq-content">' + q.content + '</div>';
+    html += '<div class="faq-meta"><span>👁️ ' + q.views + '</span><span>💬 ' + (q.answers ? q.answers.length : 0) + ' 回答</span></div>';
+    if (q.answers && q.answers.length > 0) {
+      html += '<div class="faq-answers">';
+      q.answers.forEach(function(a) {
+        html += '<div class="faq-answer"><div class="answer-author"><div class="post-avatar" style="width: 24px; height: 24px; font-size: 12px;">答</div><span>热心网友</span></div><p>' + a.content + '</p></div>';
+      });
+      html += '</div>';
+    }
+    html += '</div>';
+  });
+  
+  document.getElementById('faqList').innerHTML = html || '<div class="empty-state"><div class="icon">❓</div><h3>暂无问题</h3></div>';
+}
+
+function searchFaq() {
+  renderFaq();
+}
+
+function createFaq() {
+  if (!user) { showModal('login'); return; }
+  
+  var category = document.getElementById('faqCategory').value;
+  var title = document.getElementById('faqTitle').value;
+  var content = document.getElementById('faqContent').value;
+  
+  if (!title || !content) {
+    showMessage('faqMessage', 'error', '请填写问题标题和描述');
+    return;
+  }
+  
+  var faq = getStorage('faq') || [];
+  faq.unshift({
+    id: Date.now(),
+    category: category,
+    title: title,
+    content: content,
+    answers: [],
+    views: 0,
+    solved: false
+  });
+  setStorage('faq', faq);
+  
+  closeModal('faq');
+  navigateTo('faq');
+}
