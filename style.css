@@ -550,13 +550,9 @@ footer a:hover { color: var(--primary); }
 .captcha-options { display: flex; gap: 20px; }
 .captcha-options label { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; }
 .captcha-options input[type="radio"] { accent-color: var(--primary); }
-.recaptcha-container { 
-  display: flex; 
-  justify-content: center; 
-  padding: 10px; 
-  background: rgba(255,255,255,0.05); 
-  border-radius: 8px;
-}
+.captcha-row { display: flex; gap: 10px; align-items: center; }
+.captcha-row input { flex: 1; }
+#captchaCanvas { width: 120px; height: 44px; background: rgba(255,255,255,0.05); border: 1px solid rgba(99,102,241,0.3); }
 .message { 
   padding: 12px 15px; 
   border-radius: 8px; 

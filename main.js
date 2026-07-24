@@ -369,7 +369,9 @@ function showModal(type) {
   document.getElementById(type + 'Modal').classList.add('active');
   document.getElementById(type + 'Message').innerHTML = '';
   if (type === 'register') {
-    initRecaptcha();
+    setTimeout(function() {
+      generateCaptcha();
+    }, 100);
   }
 }
 
@@ -401,28 +403,74 @@ function toggleCaptchaMethod() {
   }
 }
 
-var recaptchaToken = '';
+var captchaCode = '';
 
-function initRecaptcha() {
-  if (typeof grecaptcha !== 'undefined') {
-    grecaptcha.ready(function() {
-      grecaptcha.render('recaptcha-container', {
-        'sitekey': '6LcI6nQqAAAAAIo4Gk30YqT9G3yN8Xk8Q2b7vJ2t',
-        'size': 'normal',
-        'callback': function(token) {
-          recaptchaToken = token;
-        },
-        'expired-callback': function() {
-          recaptchaToken = '';
-        }
-      });
-    });
+function generateCaptcha() {
+  var canvas = document.getElementById('captchaCanvas');
+  if (!canvas) return;
+  
+  var ctx = canvas.getContext('2d');
+  canvas.width = 120;
+  canvas.height = 44;
+  
+  ctx.fillStyle = 'rgba(99,102,241,0.1)';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+  var chars = '0123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+  captchaCode = '';
+  for (var i = 0; i < 4; i++) {
+    captchaCode += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  
+  ctx.font = 'bold 24px Arial';
+  ctx.textAlign = 'center';
+  
+  var colors = ['#6366f1', '#8b5cf6', '#06b6d4', '#22c55e'];
+  for (var i = 0; i < captchaCode.length; i++) {
+    var char = captchaCode.charAt(i);
+    var x = 20 + i * 25;
+    var y = 30;
+    var color = colors[Math.floor(Math.random() * colors.length)];
+    var rotate = (Math.random() - 0.5) * 0.4;
+    
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(rotate);
+    ctx.fillStyle = color;
+    ctx.fillText(char, 0, 0);
+    ctx.restore();
+  }
+  
+  for (var i = 0; i < 6; i++) {
+    ctx.strokeStyle = 'rgba(99,102,241,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
+    ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
+    ctx.stroke();
+  }
+  
+  for (var i = 0; i < 30; i++) {
+    ctx.fillStyle = 'rgba(99,102,241,0.2)';
+    ctx.beginPath();
+    ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, 1, 0, Math.PI * 2);
+    ctx.fill();
   }
 }
 
-function verifyRecaptcha() {
-  if (!recaptchaToken) {
-    showMessage('registerMessage', 'error', '请完成人机验证');
+function refreshCaptcha() {
+  generateCaptcha();
+}
+
+function verifyCaptcha() {
+  var input = document.getElementById('registerCaptcha').value;
+  if (!input) {
+    showMessage('registerMessage', 'error', '请输入图形验证码');
+    return false;
+  }
+  if (input.toUpperCase() !== captchaCode.toUpperCase()) {
+    showMessage('registerMessage', 'error', '图形验证码错误');
+    generateCaptcha();
     return false;
   }
   return true;
@@ -510,6 +558,10 @@ function register() {
 
   if (!school || !studentId || !phone || !code || !password || !confirmPassword) {
     showMessage('registerMessage', 'error', '请填写所有必填字段');
+    return;
+  }
+
+  if (!verifyCaptcha()) {
     return;
   }
 

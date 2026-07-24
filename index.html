@@ -11,7 +11,7 @@
   <title>三下乡优秀实践队伍经验交流平台</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://webapi.amap.com/maps?v=1.4.15&key=f7784cf15c511dddf5b04d35e49e244a"></script>
-  <script src="https://www.google.com/recaptcha/api.js?render=6LcI6nQqAAAAAIo4Gk30YqT9G3yN8Xk8Q2b7vJ2t"></script>
+  
 </head>
 <body>
   <header>
@@ -504,8 +504,12 @@
         <p>📧 邮箱验证：验证码将发送到您的邮箱</p>
       </div>
       <div class="form-group">
-        <label>人机验证 *</label>
-        <div id="recaptcha-container" class="recaptcha-container"></div>
+        <label>图形验证码 *</label>
+        <div class="captcha-row">
+          <input type="text" id="registerCaptcha" placeholder="请输入验证码">
+          <canvas id="captchaCanvas" onclick="refreshCaptcha()" style="cursor: pointer; border-radius: 8px;"></canvas>
+        </div>
+        <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">点击图片刷新验证码</p>
       </div>
       <div class="form-group">
         <label>密码 *</label>
