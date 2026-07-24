@@ -8,7 +8,6 @@
   <meta name="robots" content="index, follow">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
   <title>三下乡优秀实践队伍经验交流平台</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -22,6 +21,9 @@
       --text-primary: #ffffff; 
       --text-secondary: #a0a0a0; 
       --text-muted: #666666;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
     }
     body { 
       background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-mid) 50%, var(--bg-light) 100%); 
@@ -48,7 +50,7 @@
       text-decoration: none;
       cursor: pointer;
     }
-    .nav-links { display: flex; list-style: none; gap: 30px; }
+    .nav-links { display: flex; list-style: none; gap: 30px; align-items: center; }
     .nav-links a { 
       color: var(--text-secondary); 
       text-decoration: none; 
@@ -67,6 +69,50 @@
       background: linear-gradient(90deg, var(--primary), var(--secondary));
     }
     .burger { display: none; font-size: 24px; cursor: pointer; color: var(--text-secondary); }
+    .auth-btn { 
+      padding: 8px 20px; 
+      border-radius: 8px; 
+      font-size: 14px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: all 0.3s; 
+      border: none; 
+      text-decoration: none;
+    }
+    .login-btn { 
+      background: rgba(99,102,241,0.1); 
+      color: var(--primary); 
+      border: 1px solid rgba(99,102,241,0.3);
+    }
+    .login-btn:hover { background: rgba(99,102,241,0.2); }
+    .register-btn { 
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      color: white; 
+      margin-left: 10px;
+    }
+    .register-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(99,102,241,0.4); }
+    .user-info { display: flex; align-items: center; gap: 15px; }
+    .user-avatar { 
+      width: 40px; 
+      height: 40px; 
+      border-radius: 50%; 
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .user-name { font-size: 14px; color: var(--text-secondary); }
+    .logout-btn { 
+      background: transparent; 
+      color: var(--text-muted); 
+      border: none; 
+      font-size: 14px; 
+      cursor: pointer;
+    }
+    .logout-btn:hover { color: var(--error); }
     .hero { 
       text-align: center; 
       padding: 60px 20px; 
@@ -264,13 +310,6 @@
     .read-more:hover { text-decoration: underline; }
     .page-section { display: none; animation: fadeIn 0.4s ease-out; }
     .page-section.active { display: block; }
-    .article-list-page h1, .gallery-page h1 { 
-      font-size: 32px; 
-      margin-bottom: 30px; 
-      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
-      -webkit-background-clip: text; 
-      -webkit-text-fill-color: transparent;
-    }
     .article-content { 
       max-width: 800px; 
       margin: 0 auto;
@@ -385,7 +424,6 @@
       background: rgba(99,102,241,0.2); 
       border-color: rgba(99,102,241,0.5);
     }
-    #twikoo-container { margin-top: 40px; padding: 20px; background: rgba(255,255,255,0.03); border-radius: 12px; }
     .modal { 
       display: none; 
       position: fixed; 
@@ -403,26 +441,133 @@
     .modal.active { display: flex; }
     .modal-content { 
       width: 100%; 
-      max-width: 800px; 
-      aspect-ratio: 4/3; 
+      max-width: 450px; 
+      background: rgba(26,26,62,0.95); 
       border-radius: 16px; 
-      position: relative;
+      padding: 40px; 
+      border: 1px solid rgba(99,102,241,0.3);
       animation: zoomIn 0.3s ease-out;
+      position: relative;
     }
     @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .modal-close { 
       position: absolute; 
-      top: -40px; 
-      right: 0; 
-      width: 40px; 
-      height: 40px; 
+      top: 15px; 
+      right: 15px; 
+      width: 35px; 
+      height: 35px; 
       border-radius: 50%; 
       background: rgba(255,255,255,0.1);
       border: none;
       color: white;
-      font-size: 24px;
+      font-size: 20px;
       cursor: pointer;
     }
+    .modal-close:hover { background: rgba(255,255,255,0.2); }
+    .modal-title { 
+      font-size: 24px; 
+      text-align: center; 
+      margin-bottom: 30px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { 
+      display: block; 
+      font-size: 14px; 
+      color: var(--text-secondary); 
+      margin-bottom: 8px;
+    }
+    .form-group input, .form-group select, .form-group textarea { 
+      width: 100%; 
+      padding: 12px 15px; 
+      border: 1px solid rgba(99,102,241,0.3); 
+      border-radius: 8px; 
+      background: rgba(255,255,255,0.05); 
+      color: var(--text-primary); 
+      font-size: 14px;
+      transition: all 0.3s;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { 
+      outline: none; 
+      border-color: var(--primary); 
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-row { display: flex; gap: 15px; }
+    .form-row .form-group { flex: 1; }
+    .btn-primary { 
+      width: 100%; 
+      padding: 14px; 
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      color: white; 
+      border: none; 
+      border-radius: 8px; 
+      font-size: 16px; 
+      font-weight: 500; 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(99,102,241,0.4); }
+    .btn-secondary { 
+      width: 100%; 
+      padding: 14px; 
+      background: transparent; 
+      color: var(--text-secondary); 
+      border: 1px solid rgba(99,102,241,0.3); 
+      border-radius: 8px; 
+      font-size: 16px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .btn-secondary:hover { background: rgba(99,102,241,0.1); }
+    .btn-outline { 
+      padding: 10px 20px; 
+      background: transparent; 
+      color: var(--primary); 
+      border: 1px solid var(--primary); 
+      border-radius: 8px; 
+      font-size: 14px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .btn-outline:hover { background: var(--primary); color: white; }
+    .btn-danger { 
+      padding: 10px 20px; 
+      background: rgba(239,68,68,0.1); 
+      color: var(--error); 
+      border: 1px solid rgba(239,68,68,0.3); 
+      border-radius: 8px; 
+      font-size: 14px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .btn-danger:hover { background: var(--error); color: white; }
+    .form-switch { text-align: center; margin-top: 20px; }
+    .form-switch a { color: var(--primary); text-decoration: none; }
+    .form-switch a:hover { text-decoration: underline; }
+    .captcha-btn { 
+      padding: 12px 15px; 
+      background: rgba(99,102,241,0.1); 
+      color: var(--primary); 
+      border: 1px solid rgba(99,102,241,0.3); 
+      border-radius: 8px; 
+      font-size: 14px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .captcha-btn:hover { background: rgba(99,102,241,0.2); }
+    .captcha-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .message { 
+      padding: 12px 15px; 
+      border-radius: 8px; 
+      margin-bottom: 20px; 
+      font-size: 14px;
+    }
+    .message.success { background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: var(--success); }
+    .message.error { background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.3); color: var(--error); }
+    .message.warning { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.3); color: var(--warning); }
     .stats-grid { 
       display: grid; 
       grid-template-columns: repeat(3, 1fr); 
@@ -465,6 +610,112 @@
     }
     .scroll-top.active { opacity: 1; visibility: visible; }
     .scroll-top:hover { transform: translateY(-3px); }
+    .forum-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+    .forum-header h1 { 
+      font-size: 32px; 
+      background: linear-gradient(90deg, var(--primary), var(--secondary)); 
+      -webkit-background-clip: text; 
+      -webkit-text-fill-color: transparent;
+    }
+    .post-card { 
+      background: rgba(255,255,255,0.05); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(99,102,241,0.2); 
+      border-radius: 12px; 
+      padding: 25px; 
+      margin-bottom: 15px; 
+      cursor: pointer; 
+      transition: all 0.3s;
+    }
+    .post-card:hover { border-color: rgba(99,102,241,0.4); }
+    .post-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .post-author { display: flex; align-items: center; gap: 10px; }
+    .post-avatar { 
+      width: 36px; 
+      height: 36px; 
+      border-radius: 50%; 
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    .post-author-info { font-size: 14px; }
+    .post-author-name { color: var(--text-primary); font-weight: 500; }
+    .post-author-school { color: var(--text-muted); font-size: 12px; }
+    .post-time { color: var(--text-muted); font-size: 12px; }
+    .post-title { font-size: 20px; color: var(--text-primary); margin-bottom: 10px; }
+    .post-content { color: var(--text-secondary); line-height: 1.6; margin-bottom: 15px; }
+    .post-meta { display: flex; gap: 20px; font-size: 14px; color: var(--text-muted); }
+    .post-meta span { display: flex; align-items: center; gap: 5px; }
+    .comment-section { margin-top: 30px; padding-top: 30px; border-top: 1px solid rgba(99,102,241,0.2); }
+    .comment-section h3 { font-size: 20px; margin-bottom: 20px; }
+    .comment-list { margin-bottom: 20px; }
+    .comment-item { 
+      background: rgba(255,255,255,0.03); 
+      border-radius: 8px; 
+      padding: 15px; 
+      margin-bottom: 10px;
+    }
+    .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .comment-author { display: flex; align-items: center; gap: 8px; }
+    .comment-avatar { 
+      width: 30px; 
+      height: 30px; 
+      border-radius: 50%; 
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .comment-text { color: var(--text-secondary); font-size: 14px; line-height: 1.6; }
+    .comment-form { margin-top: 20px; }
+    .comment-form textarea { 
+      width: 100%; 
+      padding: 15px; 
+      border: 1px solid rgba(99,102,241,0.3); 
+      border-radius: 8px; 
+      background: rgba(255,255,255,0.05); 
+      color: var(--text-primary); 
+      font-size: 14px;
+      resize: vertical;
+      min-height: 100px;
+      margin-bottom: 15px;
+    }
+    .comment-form textarea:focus { 
+      outline: none; 
+      border-color: var(--primary); 
+      box-shadow: 0 0 0 3px rgba(99,102,241,0.1);
+    }
+    .tag { 
+      display: inline-block; 
+      padding: 4px 12px; 
+      border-radius: 20px; 
+      font-size: 12px; 
+      background: rgba(99,102,241,0.1); 
+      color: var(--primary); 
+      margin-right: 8px;
+      margin-bottom: 8px;
+    }
+    .category-filter { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+    .category-btn { 
+      padding: 8px 16px; 
+      border-radius: 20px; 
+      font-size: 14px; 
+      cursor: pointer; 
+      border: 1px solid rgba(99,102,241,0.3); 
+      background: rgba(255,255,255,0.05); 
+      color: var(--text-secondary); 
+      transition: all 0.3s;
+    }
+    .category-btn:hover, .category-btn.active { 
+      background: var(--primary); 
+      border-color: var(--primary); 
+      color: white;
+    }
     @media (max-width: 1024px) {
       .quick-links { grid-template-columns: repeat(2, 1fr); }
       .gallery-grid { grid-template-columns: repeat(2, 1fr); }
@@ -492,6 +743,7 @@
       .carousel-image { font-size: 22px; }
       .article-content h1 { font-size: 26px; }
       .article-content h2 { font-size: 20px; }
+      .form-row { flex-direction: column; }
     }
     @media (max-width: 480px) {
       .quick-links { grid-template-columns: 1fr; }
@@ -512,6 +764,16 @@
         <li><a href="#" onclick="navigateTo('home')" class="active">首页</a></li>
         <li><a href="#" onclick="navigateTo('articles')">实践经验</a></li>
         <li><a href="#" onclick="navigateTo('gallery')">成果展厅</a></li>
+        <li><a href="#" onclick="navigateTo('forum')">校园论坛</a></li>
+        <li id="auth-section">
+          <button class="auth-btn login-btn" onclick="showModal('login')">登录</button>
+          <button class="auth-btn register-btn" onclick="showModal('register')">注册</button>
+        </li>
+        <li id="user-section" style="display: none;" class="user-info">
+          <div class="user-avatar" id="userAvatar"></div>
+          <span class="user-name" id="userName"></span>
+          <button class="logout-btn" onclick="logout()">退出</button>
+        </li>
       </ul>
       <div class="burger" onclick="toggleMenu()">☰</div>
     </nav>
@@ -555,15 +817,15 @@
           <h4>成果展厅</h4>
           <p>浏览实践活动的精彩瞬间</p>
         </div>
+        <div class="quick-link" onclick="navigateTo('forum')">
+          <div class="icon">💬</div>
+          <h4>校园论坛</h4>
+          <p>自由分享交流实践心得</p>
+        </div>
         <div class="quick-link" onclick="openArticle('article1')">
           <div class="icon">🍎</div>
           <h4>苹果产业调研</h4>
           <p>雷大镇屈岔村、合岘村调研纪实</p>
-        </div>
-        <div class="quick-link" onclick="openArticle('article2')">
-          <div class="icon">🚩</div>
-          <h4>红色研学</h4>
-          <p>界石铺长征纪念馆研学纪实</p>
         </div>
       </section>
       <section class="articles-preview">
@@ -634,6 +896,30 @@
     </main>
   </section>
 
+  <section id="forum-page" class="page-section">
+    <main class="container">
+      <div class="forum-header">
+        <h1>💬 校园论坛</h1>
+        <button class="btn-outline" onclick="showModal('post')">发布帖子</button>
+      </div>
+      <div class="category-filter">
+        <button class="category-btn active" onclick="filterPosts('all')">全部</button>
+        <button class="category-btn" onclick="filterPosts('经验分享')">经验分享</button>
+        <button class="category-btn" onclick="filterPosts('活动招募')">活动招募</button>
+        <button class="category-btn" onclick="filterPosts('求助问答')">求助问答</button>
+        <button class="category-btn" onclick="filterPosts('心得体会')">心得体会</button>
+      </div>
+      <div id="postList"></div>
+    </main>
+  </section>
+
+  <section id="post-detail-page" class="page-section">
+    <main class="container">
+      <button class="back-btn" onclick="navigateTo('forum')">‹ 返回论坛</button>
+      <div id="postDetail"></div>
+    </main>
+  </section>
+
   <section id="article1-page" class="page-section">
     <main class="container">
       <button class="back-btn" onclick="navigateTo('articles')">‹ 返回列表</button>
@@ -690,6 +976,94 @@
     </div>
   </footer>
 
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('login')">×</button>
+      <h2 class="modal-title">用户登录</h2>
+      <div id="loginMessage"></div>
+      <div class="form-group">
+        <label>账号</label>
+        <input type="text" id="loginAccount" placeholder="请输入邮箱或学号">
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="loginPassword" placeholder="请输入密码">
+      </div>
+      <button class="btn-primary" onclick="login()">登 录</button>
+      <div class="form-switch">
+        还没有账号？<a href="#" onclick="showModal('register'); closeModal('login');">立即注册</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('register')">×</button>
+      <h2 class="modal-title">用户注册</h2>
+      <div id="registerMessage"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>学校</label>
+          <input type="text" id="registerSchool" placeholder="请输入学校名称">
+        </div>
+        <div class="form-group">
+          <label>学号</label>
+          <input type="text" id="registerStudentId" placeholder="请输入学号">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>邮箱</label>
+        <input type="email" id="registerEmail" placeholder="请输入邮箱">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>验证码</label>
+          <input type="text" id="registerCode" placeholder="请输入验证码">
+        </div>
+        <button class="captcha-btn" id="sendCaptchaBtn" onclick="sendCaptcha()">发送验证码</button>
+      </div>
+      <div class="form-group">
+        <label>密码</label>
+        <input type="password" id="registerPassword" placeholder="请输入密码">
+      </div>
+      <div class="form-group">
+        <label>确认密码</label>
+        <input type="password" id="registerConfirmPassword" placeholder="请再次输入密码">
+      </div>
+      <button class="btn-primary" onclick="register()">注 册</button>
+      <div class="form-switch">
+        已有账号？<a href="#" onclick="showModal('login'); closeModal('register');">立即登录</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="postModal">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeModal('post')">×</button>
+      <h2 class="modal-title">发布帖子</h2>
+      <div id="postMessage"></div>
+      <div class="form-group">
+        <label>标题</label>
+        <input type="text" id="postTitle" placeholder="请输入帖子标题">
+      </div>
+      <div class="form-group">
+        <label>分类</label>
+        <select id="postCategory">
+          <option value="经验分享">经验分享</option>
+          <option value="活动招募">活动招募</option>
+          <option value="求助问答">求助问答</option>
+          <option value="心得体会">心得体会</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>内容</label>
+        <textarea id="postContent" placeholder="请输入帖子内容"></textarea>
+      </div>
+      <button class="btn-primary" onclick="createPost()">发 布</button>
+      <button class="btn-secondary" onclick="closeModal('post')">取 消</button>
+    </div>
+  </div>
+
   <div class="modal" id="galleryModal">
     <div class="modal-content" id="modalContent"></div>
     <button class="modal-close" onclick="closeGallery()">×</button>
@@ -728,7 +1102,6 @@
 
     document.querySelector('.carousel').addEventListener('mouseenter', stopCarousel);
     document.querySelector('.carousel').addEventListener('mouseleave', startCarousel);
-
     startCarousel();
 
     function toggleMenu() {
@@ -747,6 +1120,7 @@
       if (activeLink) activeLink.classList.add('active');
       document.getElementById('navLinks').classList.remove('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (pageId === 'forum') renderPosts();
     }
 
     function openArticle(articleId) {
@@ -834,7 +1208,293 @@
       }
     }
 
-    window.addEventListener('load', checkVerification);
-  </script>
-</body>
-</html>
+    window.addEventListener('load', function() {
+      checkVerification();
+      loadUser();
+      initMockData();
+    });
+
+    var user = null;
+    var currentCaptcha = '';
+    var captchaTimer = null;
+
+    function getStorage(key) {
+      try {
+        return JSON.parse(localStorage.getItem(key) || 'null');
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function setStorage(key, value) {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
+
+    function initMockData() {
+      var users = getStorage('users');
+      if (!users || users.length === 0) {
+        setStorage('users', [
+          { id: 1, school: 'XX大学', studentId: '2023001', email: 'test@example.com', password: '123456', nickname: '张三', avatar: '张' },
+          { id: 2, school: 'YY大学', studentId: '2023002', email: 'test2@example.com', password: '123456', nickname: '李四', avatar: '李' }
+        ]);
+      }
+      var posts = getStorage('posts');
+      if (!posts || posts.length === 0) {
+        setStorage('posts', [
+          { id: 1, userId: 1, title: '我的三下乡实践心得', category: '心得体会', content: '这次三下乡实践让我收获很多，深入乡村了解了农村的发展现状，也锻炼了自己的实践能力。', createdAt: '2026-07-23 10:30', comments: [{ userId: 2, content: '写得真好！', createdAt: '2026-07-23 11:00' }] },
+          { id: 2, userId: 2, title: '求组队！暑期三下乡', category: '活动招募', content: '有没有同学想一起组队参加暑期三下乡活动？我们可以一起调研乡村产业发展。', createdAt: '2026-07-22 15:00', comments: [] },
+          { id: 3, userId: 1, title: '实践经验分享：如何做好调研', category: '经验分享', content: '分享一下我的调研经验：1. 提前做好准备工作；2. 多与当地居民交流；3. 注意安全问题。', createdAt: '2026-07-21 09:00', comments: [{ userId: 2, content: '非常实用！', createdAt: '2026-07-21 10:30' }] }
+        ]);
+      }
+    }
+
+    function loadUser() {
+      user = getStorage('currentUser');
+      if (user) {
+        document.getElementById('auth-section').style.display = 'none';
+        document.getElementById('user-section').style.display = 'flex';
+        document.getElementById('userAvatar').textContent = user.avatar || user.nickname.charAt(0);
+        document.getElementById('userName').textContent = user.nickname;
+      } else {
+        document.getElementById('auth-section').style.display = 'flex';
+        document.getElementById('user-section').style.display = 'none';
+      }
+    }
+
+    function showModal(type) {
+      document.getElementById(type + 'Modal').classList.add('active');
+      document.getElementById(type + 'Message').innerHTML = '';
+    }
+
+    function closeModal(type) {
+      document.getElementById(type + 'Modal').classList.remove('active');
+    }
+
+    function showMessage(elementId, type, message) {
+      document.getElementById(elementId).innerHTML = '<div class="message ' + type + '">' + message + '</div>';
+    }
+
+    function sendCaptcha() {
+      var email = document.getElementById('registerEmail').value;
+      if (!email) {
+        showMessage('registerMessage', 'error', '请先输入邮箱');
+        return;
+      }
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showMessage('registerMessage', 'error', '请输入正确的邮箱格式');
+        return;
+      }
+      currentCaptcha = Math.random().toString(36).substring(2, 8).toUpperCase();
+      showMessage('registerMessage', 'success', '验证码已发送到邮箱：' + currentCaptcha + '（模拟）');
+      var btn = document.getElementById('sendCaptchaBtn');
+      btn.disabled = true;
+      btn.textContent = '60秒后重新发送';
+      var count = 60;
+      captchaTimer = setInterval(function() {
+        count--;
+        btn.textContent = count + '秒后重新发送';
+        if (count <= 0) {
+          clearInterval(captchaTimer);
+          btn.disabled = false;
+          btn.textContent = '发送验证码';
+        }
+      }, 1000);
+    }
+
+    function register() {
+      var school = document.getElementById('registerSchool').value;
+      var studentId = document.getElementById('registerStudentId').value;
+      var email = document.getElementById('registerEmail').value;
+      var code = document.getElementById('registerCode').value;
+      var password = document.getElementById('registerPassword').value;
+      var confirmPassword = document.getElementById('registerConfirmPassword').value;
+
+      if (!school || !studentId || !email || !code || !password || !confirmPassword) {
+        showMessage('registerMessage', 'error', '请填写所有字段');
+        return;
+      }
+
+      if (code.toUpperCase() !== currentCaptcha) {
+        showMessage('registerMessage', 'error', '验证码错误');
+        return;
+      }
+
+      if (password !== confirmPassword) {
+        showMessage('registerMessage', 'error', '两次密码输入不一致');
+        return;
+      }
+
+      var users = getStorage('users');
+      var existingUser = users.find(function(u) { return u.email === email || u.studentId === studentId; });
+      if (existingUser) {
+        showMessage('registerMessage', 'error', '该邮箱或学号已被注册');
+        return;
+      }
+
+      var newUser = {
+        id: Date.now(),
+        school: school,
+        studentId: studentId,
+        email: email,
+        password: password,
+        nickname: school + '-' + studentId.substring(0, 4),
+        avatar: school.charAt(0)
+      };
+      users.push(newUser);
+      setStorage('users', users);
+
+      showMessage('registerMessage', 'success', '注册成功！请登录');
+      setTimeout(function() {
+        closeModal('register');
+        showModal('login');
+      }, 2000);
+    }
+
+    function login() {
+      var account = document.getElementById('loginAccount').value;
+      var password = document.getElementById('loginPassword').value;
+
+      if (!account || !password) {
+        showMessage('loginMessage', 'error', '请填写账号和密码');
+        return;
+      }
+
+      var users = getStorage('users');
+      var foundUser = users.find(function(u) {
+        return (u.email === account || u.studentId === account) && u.password === password;
+      });
+
+      if (!foundUser) {
+        showMessage('loginMessage', 'error', '账号或密码错误');
+        return;
+      }
+
+      setStorage('currentUser', foundUser);
+      loadUser();
+      closeModal('login');
+      showMessage('loginMessage', 'success', '登录成功！');
+    }
+
+    function logout() {
+      setStorage('currentUser', null);
+      loadUser();
+    }
+
+    function renderPosts(category) {
+      var posts = getStorage('posts') || [];
+      var users = getStorage('users') || [];
+      var filteredPosts = category === 'all' ? posts : posts.filter(function(p) { return p.category === category; });
+
+      var html = '';
+      filteredPosts.forEach(function(post) {
+        var author = users.find(function(u) { return u.id === post.userId; }) || { nickname: '未知用户', avatar: '?', school: '' };
+        html += '<div class="post-card" onclick="openPostDetail(' + post.id + ')">';
+        html += '<div class="post-header"><div class="post-author"><div class="post-avatar">' + author.avatar + '</div><div class="post-author-info"><div class="post-author-name">' + author.nickname + '</div><div class="post-author-school">' + author.school + '</div></div></div><div class="post-time">' + post.createdAt + '</div></div>';
+        html += '<span class="tag">' + post.category + '</span>';
+        html += '<h3 class="post-title">' + post.title + '</h3>';
+        html += '<p class="post-content">' + post.content.substring(0, 100) + (post.content.length > 100 ? '...' : '') + '</p>';
+        html += '<div class="post-meta"><span>💬 ' + (post.comments ? post.comments.length : 0) + ' 评论</span></div></div>';
+      });
+
+      document.getElementById('postList').innerHTML = html || '<p style="text-align: center; color: var(--text-muted);">暂无帖子</p>';
+    }
+
+    function filterPosts(category) {
+      document.querySelectorAll('.category-btn').forEach(function(btn) { btn.classList.remove('active'); });
+      event.target.classList.add('active');
+      renderPosts(category);
+    }
+
+    function openPostDetail(postId) {
+      var posts = getStorage('posts') || [];
+      var users = getStorage('users') || [];
+      var post = posts.find(function(p) { return p.id === postId; });
+
+      if (!post) return;
+
+      var author = users.find(function(u) { return u.id === post.userId; }) || { nickname: '未知用户', avatar: '?', school: '' };
+
+      var html = '';
+      html += '<div class="post-header"><div class="post-author"><div class="post-avatar">' + author.avatar + '</div><div class="post-author-info"><div class="post-author-name">' + author.nickname + '</div><div class="post-author-school">' + author.school + '</div></div></div><div class="post-time">' + post.createdAt + '</div></div>';
+      html += '<span class="tag">' + post.category + '</span>';
+      html += '<h1 class="post-title" style="margin-top: 20px;">' + post.title + '</h1>';
+      html += '<p class="post-content" style="font-size: 16px; line-height: 1.8;">' + post.content + '</p>';
+
+      html += '<div class="comment-section"><h3>💬 评论 (' + (post.comments ? post.comments.length : 0) + ')</h3><div class="comment-list">';
+
+      if (post.comments && post.comments.length > 0) {
+        post.comments.forEach(function(comment) {
+          var commentAuthor = users.find(function(u) { return u.id === comment.userId; }) || { nickname: '未知用户', avatar: '?' };
+          html += '<div class="comment-item"><div class="comment-header"><div class="comment-author"><div class="comment-avatar">' + commentAuthor.avatar + '</div><span style="color: var(--text-primary); font-size: 14px;">' + commentAuthor.nickname + '</span></div><span style="color: var(--text-muted); font-size: 12px;">' + comment.createdAt + '</span></div><div class="comment-text">' + comment.content + '</div></div>';
+        });
+      } else {
+        html += '<p style="color: var(--text-muted); text-align: center;">暂无评论</p>';
+      }
+
+      html += '</div><div class="comment-form"><textarea id="commentContent" placeholder="请输入评论内容"></textarea><button class="btn-primary" onclick="addComment(' + postId + ')">发表评论</button></div></div>';
+
+      document.getElementById('postDetail').innerHTML = html;
+      document.querySelectorAll('.page-section').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('post-detail-page').classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function addComment(postId) {
+      if (!user) {
+        showModal('login');
+        return;
+      }
+
+      var content = document.getElementById('commentContent').value;
+      if (!content.trim()) {
+        alert('请输入评论内容');
+        return;
+      }
+
+      var posts = getStorage('posts') || [];
+      var postIndex = posts.findIndex(function(p) { return p.id === postId; });
+      if (postIndex === -1) return;
+
+      posts[postIndex].comments = posts[postIndex].comments || [];
+      posts[postIndex].comments.push({
+        userId: user.id,
+        content: content.trim(),
+        createdAt: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-')
+      });
+
+      setStorage('posts', posts);
+      document.getElementById('commentContent').value = '';
+      openPostDetail(postId);
+    }
+
+    function createPost() {
+      if (!user) {
+        showModal('login');
+        return;
+      }
+
+      var title = document.getElementById('postTitle').value;
+      var category = document.getElementById('postCategory').value;
+      var content = document.getElementById('postContent').value;
+
+      if (!title || !content) {
+        showMessage('postMessage', 'error', '请填写标题和内容');
+        return;
+      }
+
+      var posts = getStorage('posts') || [];
+      posts.unshift({
+        id: Date.now(),
+        userId: user.id,
+        title: title,
+        category: category,
+        content: content,
+        createdAt: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' }).replace(/\//g, '-'),
+        comments: []
+      });
+
+      setStorage('posts', posts);
+      closeModal('post');
+      navigateTo('forum');
+    }
